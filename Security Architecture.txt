@@ -1,0 +1,11 @@
+from cryptography.fernet import Fernet
+
+class CredentialVault:
+    def __init__(self, master_key: bytes):
+        self.fernet = Fernet(master_key)
+    
+    def encrypt(self, plaintext: str) -> bytes:
+        return self.fernet.encrypt(plaintext.encode())
+    
+    def decrypt(self, ciphertext: bytes) -> str:
+        return self.fernet.decrypt(ciphertext).decode()

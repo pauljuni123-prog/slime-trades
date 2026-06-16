@@ -1,0 +1,75 @@
+// components/ai/ChatInterface.tsx
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { MessageBubble } from './MessageBubble';
+import { StreamingText } from './StreamingText';
+import { QuickReply } from './QuickReply';
+import { VoiceInput } from './VoiceInput';
+
+export function ChatInterface() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const messagesEndRef = useRef<<HTMLDivElement>(null);
+  const { send } = useWebSocket('ai');
+  
+  const { data: history } = useQuery({
+    queryKey: ['ai', 'history'],
+    queryFn: () => apiClient.get('/v1/ai/chat'),
+  });
+  
+  const mutation = useMutation({
+    mutationFn: (message: string) => 
+      apiClient.post('/v1/ai/chat', { message, session_id: 'current' }),
+    onSuccess: (data) => {
+      setMessages((prev) => [...prev, { role: 'AI', content: data.message }]);
+      setIsStreaming(false);
+    },
+  });
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    
+    const userMessage = input;
+    setInput('');
+    setMessages((prev) => [...prev, { role: 'USER', content: userMessage }]);
+    setIsStreaming(true);
+    
+    mutation.mutate(userMessage);
+  };
+  
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+  
+  return (
+    <div className="flex flex-col h-[600px] bg-slate-900 rounded-2xl border border-slate-800">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((msg, i) => (
+          <MessageBubble key={i} message={msg} />
+        ))}
+        {isStreaming && <StreamingText />}
+        <div ref={messagesEndRef} />
+      </div>
+      
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="p-4 border-t border-slate-800">
+        <div className="flex gap-2">
+          <VoiceInput onTranscript={setInput} />
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask Slime AI..."
+            className="flex-1 bg-slate-800 rounded-lg px-4 py-2 text-sm"
+          />
+          <button type="submit" className="btn-primary px-4">Send</button>
+        </div>
+      </form>
+    </div>
+  );
+}

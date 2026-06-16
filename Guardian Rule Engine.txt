@@ -1,0 +1,37 @@
+class GuardianRuleEngine:
+    def __init__(self):
+        self.rules = [
+            DailyLossLimitRule(),
+            MaxDailyTradesRule(),
+            ConsecutiveLossCooldownRule(),
+            MindScanGateRule(),
+            LotSizeEscalationRule(),
+            TimeOfDayRule(),
+            RevengePatternRule(),
+            DrawdownLimitRule(),
+            CorrelationExposureRule(),
+            WeekendTradingRule()
+        ]
+    
+    def evaluate(self, user_id: str, proposed_trade: dict) -> GuardianDecision:
+        """
+        Evaluates all active rules in priority order.
+        Returns first BLOCK decision, or most severe WARN.
+        """
+        active_rules = self.get_active_rules(user_id)
+        context = self.build_context(user_id, proposed_trade)
+        
+        decisions = []
+        for rule in sorted(active_rules, key=lambda r: r.priority):
+            decision = rule.evaluate(context)
+            decisions.append(decision)
+            
+            if decision.action == 'BLOCK':
+                # Immediate return on block
+                self.log_decision(user_id, decision, context)
+                return decision
+        
+        # Return most severe non-block decision
+        severe = max(decisions, key=lambda d: d.severity_score)
+        self.log_decision(user_id, severe, context)
+        return severe

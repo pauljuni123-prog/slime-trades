@@ -1,0 +1,29 @@
+// app/(dashboard)/layout.tsx
+import { redirect } from 'next/navigation';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { AuthGuard } from '@/components/shared/AuthGuard';
+
+export default function DashboardRouteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <AuthGuard>
+      <DashboardLayout>
+        {children}
+      </DashboardLayout>
+    </AuthGuard>
+  );
+}
+
+// app/(auth)/layout.tsx
+import { AuthLayout } from '@/components/layout/AuthLayout';
+
+export default function AuthRouteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <AuthLayout>{children}</AuthLayout>;
+}

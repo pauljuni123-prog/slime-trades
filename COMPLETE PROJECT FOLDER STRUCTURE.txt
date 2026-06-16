@@ -1,0 +1,215 @@
+slime-trades/
+├── README.md
+├── docker-compose.yml
+├── Makefile
+├── .env.example
+├── .gitignore
+│
+├── backend/                          # Single FastAPI service (NOT microservices)
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                   # FastAPI factory + lifespan
+│   │   ├── config.py                 # Pydantic Settings
+│   │   ├── dependencies.py           # Auth deps, DB deps, Redis deps
+│   │   ├── constants.py              # Enums, limits, AI budgets
+│   │   │
+│   │   ├── routers/                  # All routes in one service
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py               # POST /register, /login, /refresh, /logout
+│   │   │   ├── users.py              # GET/PUT /me, /profile, /settings
+│   │   ├── trades.py               # GET/POST /trades, /summary
+│   │   │   ├── mind_scan.py          # POST/GET /mind-scans, /latest
+│   │   │   ├── journal.py            # POST/GET/PUT/DELETE /journal
+│   │   │   ├── sanctuary.py          # POST/GET /sanctuary/sessions
+│   │   │   ├── ai.py                 # POST/GET /ai/chat, /insights
+│   │   │   ├── analytics.py          # GET /analytics/dashboard
+│   │   │   └── billing.py            # GET/POST /billing/*
+│   │   │
+│   │   ├── models/                   # SQLAlchemy models
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py
+│   │   │   ├── trade.py
+│   │   │   ├── mind_scan.py
+│   │   │   ├── journal.py
+│   │   │   ├── ai.py
+│   │   │   ├── sanctuary.py
+│   │   │   └── billing.py
+│   │   │
+│   │   ├── schemas/                  # Pydantic request/response
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py
+│   │   │   ├── user.py
+│   │   │   ├── trade.py
+│   │   │   ├── mind_scan.py
+│   │   │   ├── journal.py
+│   │   │   ├── ai.py
+│   │   │   └── billing.py
+│   │   │
+│   │   ├── services/                 # Business logic
+│   │   │   ├── __init__.py
+│   │   │   ├── auth_service.py
+│   │   │   ├── trade_service.py
+│   │   │   ├── mind_scan_service.py
+│   │   │   ├── journal_service.py
+│   │   │   ├── ai_service.py         # GPT-4o-mini + token budget
+│   │   │   ├── analytics_service.py
+│   │   │   └── billing_service.py
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── __init__.py
+│   │   │   ├── security.py           # Argon2id, JWT, AES-256
+│   │   │   ├── validators.py
+│   │   │   ├── ai_safety.py          # Prompt injection filters
+│   │   │   └── token_budget.py       # Redis-based AI caps
+│   │   │
+│   │   └── db/
+│   │       ├── __init__.py
+│   │       ├── base.py               # SQLAlchemy Base
+│   │       ├── session.py            # AsyncSession factory
+│   │       └── migrations/           # Alembic
+│   │           ├── env.py
+│   │           └── versions/
+│   │
+│   ├── tests/
+│   │   ├── conftest.py
+│   │   ├── test_auth.py
+│   │   ├── test_trades.py
+│   │   └── test_ai_safety.py
+│   │
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── alembic.ini
+│
+├── frontend/                         # Next.js 14 App Router
+│   ├── app/
+│   │   ├── layout.tsx                  # Root layout: providers + auth guard
+│   │   ├── globals.css
+│   │   ├── page.tsx                    # Landing page
+│   │   │
+│   │   ├── (auth)/                   # Route group: no sidebar
+│   │   │   ├── layout.tsx
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   └── register/
+│   │   │       └── page.tsx
+│   │   │
+│   │   ├── (dashboard)/              # Route group: sidebar + top nav
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx              # /dashboard
+│   │   │   ├── mind-scan/
+│   │   │   │   └── page.tsx
+│   │   │   ├── sanctuary/
+│   │   │   │   └── page.tsx
+│   │   │   ├── journal/
+│   │   │   │   └── page.tsx
+│   │   │   ├── ai/
+│   │   │   │   └── page.tsx
+│   │   │   ├── analytics/
+│   │   │   │   └── page.tsx
+│   │   │   ├── settings/
+│   │   │   │   └── page.tsx
+│   │   │   └── billing/
+│   │   │       └── page.tsx
+│   │   │
+│   │   └── api/                      # Next.js API routes (proxy)
+│   │       └── stripe/
+│   │           └── webhook/
+│   │               └── route.ts
+│   │
+│   ├── components/
+│   │   ├── ui/                       # shadcn/ui components
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── textarea.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── toast.tsx
+│   │   │   ├── skeleton.tsx
+│   │   │   ├── progress.tsx
+│   │   │   ├── badge.tsx
+│   │   │   ├── tabs.tsx
+│   │   │   ├── slider.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── switch.tsx
+│   │   │   └── scroll-area.tsx
+│   │   │
+│   │   ├── layout/
+│   │   │   ├── TopNav.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── DashboardGrid.tsx
+│   │   │   └── MobileDrawer.tsx
+│   │   │
+│   │   ├── dashboard/
+│   │   │   ├── ReadinessGauge.tsx
+│   │   │   ├── GuardianStatus.tsx
+│   │   │   ├── EquityCurve.tsx
+│   │   │   ├── ActiveTrades.tsx
+│   │   │   ├── AIInsights.tsx
+│   │   │   ├── SanctuaryQuick.tsx
+│   │   │   ├── JournalPreview.tsx
+│   │   │   └── WeeklyScore.tsx
+│   │   │
+│   │   ├── mind-scan/
+│   │   │   ├── QuestionCard.tsx
+│   │   │   ├── LikertScale.tsx
+│   │   │   ├── ProgressDots.tsx
+│   │   │   └── ScanResults.tsx
+│   │   │
+│   │   ├── sanctuary/
+│   │   │   ├── BreathingVisualizer.tsx
+│   │   │   ├── TechniqueSelector.tsx
+│   │   │   └── SessionTimer.tsx
+│   │   │
+│   │   ├── journal/
+│   │   │   ├── EntryCard.tsx
+│   │   │   ├── EntryComposer.tsx
+│   │   │   └── TagInput.tsx
+│   │   │
+│   │   ├── ai/
+│   │   │   ├── ChatInterface.tsx
+│   │   │   ├── MessageBubble.tsx
+│   │   │   └── QuickReply.tsx
+│   │   │
+│   │   └── shared/
+│   │       ├── AmbientGlow.tsx
+│   │       ├── LoadingState.tsx
+│   │       ├── EmptyState.tsx
+│   │       ├── ErrorFallback.tsx
+│   │       └── ConfirmDialog.tsx
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useUser.ts
+│   │   ├── useTrades.ts
+│   │   ├── useMindScan.ts
+│   │   ├── useJournal.ts
+│   │   ├── useAI.ts
+│   │   ├── useAnalytics.ts
+│   │   ├── useSanctuary.ts
+│   │   ├── useBilling.ts
+│   │   └── useToast.ts
+│   │
+│   ├── stores/
+│   │   ├── authStore.ts
+│   │   ├── uiStore.ts
+│   │   └── dashboardStore.ts
+│   │
+│   ├── lib/
+│   │   ├── api-client.ts
+│   │   ├── utils.ts
+│   │   └── constants.ts
+│   │
+│   ├── types/
+│   │   └── index.ts
+│   │
+│   ├── public/
+│   │   └── images/
+│   │
+│   ├── next.config.js
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
+│   └── package.json
+│
+└── infrastructure/
+    ├── docker-compose.dev.yml
+    └── docker-compose.prod.yml

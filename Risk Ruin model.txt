@@ -1,0 +1,30 @@
+class RiskOfRuinCalculator:
+    def calculate(self, win_rate: float, risk_per_trade_r: float, 
+                  max_drawdown_percent: float) -> dict:
+        """
+        Calculates probability of reaching max drawdown
+        Based on fixed fractional betting theory
+        """
+        # Risk of ruin formula: ROR = ((1 - W) / (1 + W)) ^ (C / R)
+        # Where W = win rate, C = capital units, R = risk per trade
+        
+        if win_rate <= 0.5:
+            return {"risk_of_ruin": 1.0, "status": "CRITICAL", "recommendation": "STOP_TRADING"}
+        
+        edge = win_rate - (1 - win_rate)  # W - L
+        capital_units = 100 / max_drawdown_percent  # How many R-multiples to ruin
+        
+        if risk_per_trade_r <= 0:
+            return {"risk_of_ruin": 0.0, "status": "SAFE"}
+        
+        ror = ((1 - win_rate) / win_rate) ** (capital_units / risk_per_trade_r)
+        
+        status = "SAFE" if ror < 0.01 else "CAUTION" if ror < 0.05 else "DANGER" if ror < 0.15 else "CRITICAL"
+        
+        return {
+            "risk_of_ruin": round(ror, 4),
+            "probability_percent": round(ror * 100, 2),
+            "status": status,
+            "recommendation": self.get_recommendation(status),
+            "max_safe_risk_r": self.calculate_max_safe_risk(win_rate, capital_units)
+        }

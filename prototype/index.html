@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slime Trades — Trade Smarter. Feel Stronger.</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="logo-icon">🧪</div>
+            <span class="logo-text">Slime<span class="logo-accent">Trades</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#mindscan">Mind Scan</a>
+            <a href="#calculator">Tools</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#journal">Journal</a>
+            <a href="#mt5">MT5</a>
+            <a href="#settings">Settings</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-ghost">Sign In</button>
+            <button class="btn btn-primary">Get Started</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
+        <div class="hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                AI-Powered Trading Psychology
+            </div>
+            <h1 class="hero-title">
+                Trade Smarter.<br>
+                <span class="gradient-text">Feel Stronger.</span>
+            </h1>
+            <p class="hero-subtitle">
+                The first trading platform that understands your emotions. 
+                AI coaching, real-time psychology scoring, and risk management — all in one place.
+            </p>
+            <div class="hero-cta">
+                <button class="btn btn-primary btn-lg">Start Free Trial</button>
+                <button class="btn btn-outline btn-lg">Watch Demo</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">12,400+</span>
+                    <span class="stat-label">Active Traders</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">$2.4M</span>
+                    <span class="stat-label">Risk Saved</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">94%</span>
+                    <span class="stat-label">Emotion Accuracy</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="section dashboard-section" id="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Dashboard</span>
+                <h2>Your Trading Command Center</h2>
+                <p>Real-time metrics, emotional readiness, and AI insights — all in one view.</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="dashboard-header">
+                    <div class="dashboard-title">
+                        <span class="live-dot"></span>
+                        Live Trading Dashboard
+                    </div>
+                    <div class="dashboard-time">14:32:07 UTC</div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dash-widget balance-widget">
+                        <div class="widget-label">Account Balance</div>
+                        <div class="widget-value">$47,832.50</div>
+                        <div class="widget-change positive">+$1,247.30 (+2.68%)</div>
+                        <div class="mini-chart" id="balanceChart"></div>
+                    </div>
+                    <div class="dash-widget pnl-widget">
+                        <div class="widget-label">Today's P&L</div>
+                        <div class="widget-value positive">+$847.20</div>
+                        <div class="widget-change">Win Rate: 68%</div>
+                        <div class="pnl-bars">
+                            <div class="pnl-bar win" style="width:68%"></div>
+                            <div class="pnl-bar loss" style="width:32%"></div>
+                        </div>
+                    </div>
+                    <div class="dash-widget readiness-widget">
+                        <div class="widget-label">Emotional Readiness</div>
+                        <div class="readiness-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="42"/>
+                                <circle class="ring-progress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="66"/>
+                            </svg>
+                            <div class="readiness-score">75</div>
+                        </div>
+                        <div class="readiness-label good">Good to Trade</div>
+                    </div>
+                    <div class="dash-widget trades-widget">
+                        <div class="widget-label">Open Positions</div>
+                        <div class="widget-value">3</div>
+                        <div class="trade-list">
+                            <div class="trade-item">
+                                <span class="trade-pair">EUR/USD</span>
+                                <span class="trade-dir long">LONG</span>
+                                <span class="trade-pnl positive">+$124</span>
+                            </div>
+                            <div class="trade-item">
+                                <span class="trade-pair">GBP/JPY</span>
+                                <span class="trade-dir short">SHORT</span>
+                                <span class="trade-pnl positive">+$89</span>
+                            </div>
+                            <div class="trade-item">
+                                <span class="trade-pair">XAU/USD</span>
+                                <span class="trade-dir long">LONG</span>
+                                <span class="trade-pnl negative">-$45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mind Scan Section -->
+    <section class="section mindscan-section" id="mindscan">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Mind Scan</span>
+                <h2>Know Your Mental State Before You Trade</h2>
+                <p>Our AI analyzes your emotional readiness in seconds. No more revenge trading.</p>
+            </div>
+            <div class="mindscan-card">
+                <div class="mindscan-left">
+                    <h3>How are you feeling right now?</h3>
+                    <p>Rate yourself honestly. Your Slime AI Coach uses this to guide your next moves.</p>
+
+                    <div class="scan-sliders">
+                        <div class="slider-group">
+                            <label>Stress Level</label>
+                            <div class="slider-track">
+                                <input type="range" min="0" max="100" value="30" id="stressSlider">
+                                <div class="slider-value" id="stressValue">30%</div>
+                            </div>
+                        </div>
+                        <div class="slider-group">
+                            <label>Focus Level</label>
+                            <div class="slider-track">
+                                <input type="range" min="0" max="100" value="75" id="focusSlider">
+                                <div class="slider-value" id="focusValue">75%</div>
+                            </div>
+                        </div>
+                        <div class="slider-group">
+                            <label>Confidence</label>
+                            <div class="slider-track">
+                                <input type="range" min="0" max="100" value="60" id="confidenceSlider">
+                                <div class="slider-value" id="confidenceValue">60%</div>
+                            </div>
+                        </div>
+                        <div class="slider-group">
+                            <label>Sleep Quality</label>
+                            <div class="slider-track">
+                                <input type="range" min="0" max="100" value="80" id="sleepSlider">
+                                <div class="slider-value" id="sleepValue">80%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-scan" id="scanBtn">
+                        <span class="scan-icon">🔮</span>
+                        Analyze My Readiness
+                    </button>
+                </div>
+
+                <div class="mindscan-right">
+                    <div class="scan-result" id="scanResult">
+                        <div class="result-placeholder">
+                            <div class="result-icon">🧠</div>
+                            <p>Complete the scan to see your emotional readiness score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Coach Section -->
+    <section class="section coach-section" id="coach">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">AI Coach</span>
+                <h2>Your Personal Trading Psychologist</h2>
+                <p>Slime AI analyzes your patterns, journals, and emotions to give personalized coaching.</p>
+            </div>
+            <div class="coach-card">
+                <div class="coach-sidebar">
+                    <div class="coach-avatar">
+                        <div class="avatar-ring">
+                            <span>🧪</span>
+                        </div>
+                        <div class="coach-name">Slime AI</div>
+                        <div class="coach-status">
+                            <span class="status-dot online"></span>
+                            Online
+                        </div>
+                    </div>
+                    <div class="coach-topics">
+                        <div class="topic active">Trading Psychology</div>
+                        <div class="topic">Risk Management</div>
+                        <div class="topic">Journal Review</div>
+                        <div class="topic">Strategy Help</div>
+                    </div>
+                </div>
+                <div class="coach-chat">
+                    <div class="chat-header">
+                        <span>Trading Psychology Session</span>
+                        <button class="btn btn-ghost btn-sm">New Session</button>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-avatar">🧪</div>
+                            <div class="message-bubble">
+                                <p>Hey there! I see your readiness score dropped to 62 yesterday after a losing streak. Want to talk about what happened?</p>
+                                <span class="message-time">10:23 AM</span>
+                            </div>
+                        </div>
+                        <div class="message user-message">
+                            <div class="message-bubble">
+                                <p>I kept taking bigger positions after each loss. I knew I shouldn't but I couldn't stop.</p>
+                                <span class="message-time">10:24 AM</span>
+                            </div>
+                            <div class="message-avatar">👤</div>
+                        </div>
+                        <div class="message ai-message">
+                            <div class="message-avatar">🧪</div>
+                            <div class="message-bubble">
+                                <p>That's classic <strong>revenge trading</strong> — one of the most dangerous patterns. Here's what I recommend:</p>
+                                <ul>
+                                    <li>🛑 Set a daily loss limit (suggest: 2% of account)</li>
+                                    <li>⏸️ Take a 30-min break after 2 consecutive losses</li>
+                                    <li>📝 Journal the emotion you're feeling before each trade</li>
+                                </ul>
+                                <p>Want me to set up a Guardian Rule for this?</p>
+                                <span class="message-time">10:25 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="Ask Slime AI anything about trading..." id="chatInput">
+                        <button class="btn btn-primary" id="sendBtn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guardian Rules Section -->
+    <section class="section guardian-section" id="guardian">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Guardian</span>
+                <h2>Your Risk Protection System</h2>
+                <p>Smart rules that protect you from yourself. Set limits. Stay safe.</p>
+            </div>
+            <div class="guardian-grid">
+                <div class="guardian-card active">
+                    <div class="guardian-icon">🛡️</div>
+                    <h4>Daily Loss Limit</h4>
+                    <p>Stop trading after losing 2% of account in a day</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch active"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="guardian-card active">
+                    <div class="guardian-icon">⏸️</div>
+                    <h4>Cool-Off Timer</h4>
+                    <p>30-min mandatory break after 2 consecutive losses</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch active"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="guardian-card">
+                    <div class="guardian-icon">📏</div>
+                    <h4>Max Position Size</h4>
+                    <p>Never risk more than 1% per trade</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch"></div>
+                        <span>Off</span>
+                    </div>
+                </div>
+                <div class="guardian-card active">
+                    <div class="guardian-icon">🧠</div>
+                    <h4>Readiness Gate</h4>
+                    <p>Block trading if emotional readiness is below 50</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch active"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="guardian-card">
+                    <div class="guardian-icon">🌙</div>
+                    <h4>After-Hours Block</h4>
+                    <p>No trading between 11 PM — 6 AM</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch"></div>
+                        <span>Off</span>
+                    </div>
+                </div>
+                <div class="guardian-card">
+                    <div class="guardian-icon">📊</div>
+                    <h4>Weekend Review</h4>
+                    <p>Force journal review before Monday trading</p>
+                    <div class="guardian-toggle">
+                        <div class="toggle-switch"></div>
+                        <span>Off</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="section tools-section" id="calculator">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Tools</span>
+                <h2>Professional Trading Calculators</h2>
+                <p>Position sizing and risk analysis — the tools pros use.</p>
+            </div>
+            <div class="tools-grid">
+                <!-- Position Size Calculator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">📐</div>
+                        <div>
+                            <h3>Position Size Calculator</h3>
+                            <p>Calculate exact lot size based on risk</p>
+                        </div>
+                    </div>
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Account Balance ($)</label>
+                            <input type="number" id="psBalance" value="10000" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Risk Per Trade (%)</label>
+                            <input type="number" id="psRisk" value="1" min="0.1" max="100" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Stop Loss (pips)</label>
+                            <input type="number" id="psStopLoss" value="20" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Currency Pair</label>
+                            <select id="psPair">
+                                <option value="0.0001">EUR/USD</option>
+                                <option value="0.0001">GBP/USD</option>
+                                <option value="0.01">USD/JPY</option>
+                                <option value="0.0001">AUD/USD</option>
+                                <option value="0.01">USD/CHF</option>
+                                <option value="0.0001">XAU/USD</option>
+                            </select>
+                        </div>
+                        <div class="tool-result" id="psResult">
+                            <div class="result-row">
+                                <span>Risk Amount</span>
+                                <span class="result-value" id="psRiskAmount">$100.00</span>
+                            </div>
+                            <div class="result-row">
+                                <span>Position Size</span>
+                                <span class="result-value highlight" id="psLotSize">0.50 lots</span>
+                            </div>
+                            <div class="result-row">
+                                <span>Units</span>
+                                <span class="result-value" id="psUnits">50,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk of Ruin Calculator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">📉</div>
+                        <div>
+                            <h3>Risk of Ruin Calculator</h3>
+                            <p>Probability of blowing your account</p>
+                        </div>
+                    </div>
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Account Balance ($)</label>
+                            <input type="number" id="rorBalance" value="10000" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Risk Per Trade (%)</label>
+                            <input type="number" id="rorRisk" value="2" min="0.1" max="100" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Win Rate (%)</label>
+                            <input type="number" id="rorWinRate" value="55" min="1" max="99" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Reward:Risk Ratio</label>
+                            <input type="number" id="rorRR" value="1.5" min="0.1" step="0.1">
+                        </div>
+                        <div class="tool-result" id="rorResult">
+                            <div class="result-row">
+                                <span>Risk of Ruin</span>
+                                <span class="result-value" id="rorProbability">12.4%</span>
+                            </div>
+                            <div class="result-row">
+                                <span>Max Drawdown</span>
+                                <span class="result-value" id="rorDrawdown">$2,480</span>
+                            </div>
+                            <div class="result-row">
+                                <span>Expected Value</span>
+                                <span class="result-value highlight" id="rorExpected">+$0.50/trade</span>
+                            </div>
+                        </div>
+                        <div class="risk-visual" id="riskVisual">
+                            <div class="risk-bar">
+                                <div class="risk-fill" id="riskFill" style="width:12.4%"></div>
+                            </div>
+                            <div class="risk-labels">
+                                <span>Safe</span>
+                                <span id="riskLabel">Low Risk</span>
+                                <span>Danger</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Trading Journal Section -->
+    <section class="section journal-section" id="journal">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Journal</span>
+                <h2>Your Trading Journal</h2>
+                <p>Log every trade. Review patterns. Learn from your mistakes.</p>
+            </div>
+            <div class="journal-layout">
+                <div class="journal-form-card">
+                    <h3>Log New Trade</h3>
+                    <div class="journal-form">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Date</label>
+                                <input type="date" id="jDate">
+                            </div>
+                            <div class="input-group">
+                                <label>Pair</label>
+                                <select id="jPair">
+                                    <option>EUR/USD</option>
+                                    <option>GBP/USD</option>
+                                    <option>USD/JPY</option>
+                                    <option>XAU/USD</option>
+                                    <option>AUD/USD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Direction</label>
+                                <div class="direction-toggle">
+                                    <button class="dir-btn active" data-dir="LONG">LONG</button>
+                                    <button class="dir-btn" data-dir="SHORT">SHORT</button>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Outcome</label>
+                                <div class="outcome-toggle">
+                                    <button class="out-btn active" data-out="WIN">WIN</button>
+                                    <button class="out-btn" data-out="LOSS">LOSS</button>
+                                    <button class="out-btn" data-out="BE">B/E</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Entry Price</label>
+                                <input type="number" step="0.00001" id="jEntry" placeholder="1.08500">
+                            </div>
+                            <div class="input-group">
+                                <label>Exit Price</label>
+                                <input type="number" step="0.00001" id="jExit" placeholder="1.08650">
+                            </div>
+                            <div class="input-group">
+                                <label>P&L ($)</label>
+                                <input type="number" id="jPnl" placeholder="+150">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Emotion Before Trade</label>
+                            <div class="emotion-tags">
+                                <span class="emotion-tag" data-emotion="Confident">Confident</span>
+                                <span class="emotion-tag" data-emotion="Fearful">Fearful</span>
+                                <span class="emotion-tag" data-emotion="Greedy">Greedy</span>
+                                <span class="emotion-tag" data-emotion="Calm">Calm</span>
+                                <span class="emotion-tag" data-emotion="Revenge">Revenge</span>
+                                <span class="emotion-tag" data-emotion="Hesitant">Hesitant</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Notes</label>
+                            <textarea id="jNotes" rows="3" placeholder="What did you learn?"></textarea>
+                        </div>
+                        <button class="btn btn-primary btn-block" id="addJournalBtn">Add to Journal</button>
+                    </div>
+                </div>
+                <div class="journal-list-card">
+                    <div class="journal-header">
+                        <h3>Recent Entries</h3>
+                        <div class="journal-stats">
+                            <span class="j-stat win">12 Wins</span>
+                            <span class="j-stat loss">5 Losses</span>
+                            <span class="j-stat">70% WR</span>
+                        </div>
+                    </div>
+                    <div class="journal-entries" id="journalEntries">
+                        <div class="journal-entry">
+                            <div class="entry-main">
+                                <div class="entry-pair">EUR/USD</div>
+                                <div class="entry-meta">
+                                    <span class="entry-dir long">LONG</span>
+                                    <span class="entry-date">Jun 13</span>
+                                </div>
+                            </div>
+                            <div class="entry-pnl positive">+$124.00</div>
+                            <div class="entry-emotion">Calm</div>
+                        </div>
+                        <div class="journal-entry">
+                            <div class="entry-main">
+                                <div class="entry-pair">GBP/JPY</div>
+                                <div class="entry-meta">
+                                    <span class="entry-dir short">SHORT</span>
+                                    <span class="entry-date">Jun 12</span>
+                                </div>
+                            </div>
+                            <div class="entry-pnl negative">-$45.00</div>
+                            <div class="entry-emotion">Revenge</div>
+                        </div>
+                        <div class="journal-entry">
+                            <div class="entry-main">
+                                <div class="entry-pair">XAU/USD</div>
+                                <div class="entry-meta">
+                                    <span class="entry-dir long">LONG</span>
+                                    <span class="entry-date">Jun 10</span>
+                                </div>
+                            </div>
+                            <div class="entry-pnl positive">+$89.50</div>
+                            <div class="entry-emotion">Confident</div>
+                        </div>
+                        <div class="journal-entry">
+                            <div class="entry-main">
+                                <div class="entry-pair">USD/JPY</div>
+                                <div class="entry-meta">
+                                    <span class="entry-dir short">SHORT</span>
+                                    <span class="entry-date">Jun 09</span>
+                                </div>
+                            </div>
+                            <div class="entry-pnl positive">+$210.00</div>
+                            <div class="entry-emotion">Calm</div>
+                        </div>
+                        <div class="journal-entry">
+                            <div class="entry-main">
+                                <div class="entry-pair">AUD/USD</div>
+                                <div class="entry-meta">
+                                    <span class="entry-dir long">LONG</span>
+                                    <span class="entry-date">Jun 08</span>
+                                </div>
+                            </div>
+                            <div class="entry-pnl negative">-$78.00</div>
+                            <div class="entry-emotion">Fearful</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MT5 Connection Section -->
+    <section class="section mt5-section" id="mt5">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">MT5 Integration</span>
+                <h2>Connect Your Broker</h2>
+                <p>Sync your MetaTrader 5 account for real-time trade tracking and AI analysis.</p>
+            </div>
+            <div class="mt5-layout">
+                <div class="mt5-connection-card">
+                    <div class="mt5-status-header">
+                        <div class="mt5-broker-logo">🏦</div>
+                        <div class="mt5-broker-info">
+                            <h3>MetaTrader 5</h3>
+                            <div class="mt5-status" id="mt5Status">
+                                <span class="status-indicator offline"></span>
+                                <span class="status-text">Disconnected</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="mt5ConnectBtn">Connect</button>
+                    </div>
+                    <div class="mt5-fields" id="mt5Fields">
+                        <div class="input-group">
+                            <label>Broker Server</label>
+                            <select id="mt5Server">
+                                <option>ICMarketsSC-Demo</option>
+                                <option>ICMarketsSC-Live</option>
+                                <option>Pepperstone-Demo</option>
+                                <option>OANDA-Demo</option>
+                                <option>FXCM-Demo</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Account Number</label>
+                            <input type="text" id="mt5Account" placeholder="12345678">
+                        </div>
+                        <div class="input-group">
+                            <label>Password</label>
+                            <input type="password" id="mt5Password" placeholder="••••••••">
+                        </div>
+                        <div class="mt5-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>Auto-sync trades</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>Sync balance & equity</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt5-connected" id="mt5Connected" style="display:none">
+                        <div class="sync-stats">
+                            <div class="sync-stat">
+                                <span class="sync-label">Last Sync</span>
+                                <span class="sync-value" id="lastSync">Just now</span>
+                            </div>
+                            <div class="sync-stat">
+                                <span class="sync-label">Trades Today</span>
+                                <span class="sync-value">3</span>
+                            </div>
+                            <div class="sync-stat">
+                                <span class="sync-label">Latency</span>
+                                <span class="sync-value" style="color:#00FF88">24ms</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="mt5SyncBtn">🔄 Sync Now</button>
+                        <button class="btn btn-ghost btn-sm" id="mt5DisconnectBtn" style="color:#FF4757">Disconnect</button>
+                    </div>
+                </div>
+                <div class="mt5-trades-card">
+                    <h3>Synced Trades</h3>
+                    <div class="mt5-trades-list" id="mt5Trades">
+                        <div class="mt5-trade">
+                            <div class="mt5-trade-pair">EUR/USD</div>
+                            <div class="mt5-trade-type">Buy</div>
+                            <div class="mt5-trade-lots">0.50</div>
+                            <div class="mt5-trade-pnl positive">+$124.00</div>
+                            <div class="mt5-trade-time">14:32</div>
+                        </div>
+                        <div class="mt5-trade">
+                            <div class="mt5-trade-pair">GBP/JPY</div>
+                            <div class="mt5-trade-type">Sell</div>
+                            <div class="mt5-trade-lots">0.30</div>
+                            <div class="mt5-trade-pnl positive">+$89.00</div>
+                            <div class="mt5-trade-time">11:15</div>
+                        </div>
+                        <div class="mt5-trade">
+                            <div class="mt5-trade-pair">XAU/USD</div>
+                            <div class="mt5-trade-type">Buy</div>
+                            <div class="mt5-trade-lots">0.10</div>
+                            <div class="mt5-trade-pnl negative">-$45.00</div>
+                            <div class="mt5-trade-time">09:45</div>
+                        </div>
+                    </div>
+                    <div class="mt5-sync-log" id="mt5SyncLog">
+                        <div class="log-entry"><span class="log-time">14:32:07</span> Trade synced: EUR/USD Buy +$124.00</div>
+                        <div class="log-entry"><span class="log-time">11:15:22</span> Trade synced: GBP/JPY Sell +$89.00</div>
+                        <div class="log-entry"><span class="log-time">09:45:11</span> Trade synced: XAU/USD Buy -$45.00</div>
+                        <div class="log-entry"><span class="log-time">09:00:00</span> Connected to ICMarketsSC-Demo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section class="section settings-section" id="settings">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Settings</span>
+                <h2>Your Preferences</h2>
+                <p>Customize your Slime Trades experience.</p>
+            </div>
+            <div class="settings-layout">
+                <div class="settings-sidebar">
+                    <div class="settings-tab active" data-tab="profile">👤 Profile</div>
+                    <div class="settings-tab" data-tab="notifications">🔔 Notifications</div>
+                    <div class="settings-tab" data-tab="trading">📊 Trading</div>
+                    <div class="settings-tab" data-tab="ai">🤖 AI Coach</div>
+                    <div class="settings-tab" data-tab="security">🔒 Security</div>
+                </div>
+                <div class="settings-content">
+                    <!-- Profile Tab -->
+                    <div class="settings-panel active" id="panel-profile">
+                        <h3>Profile Settings</h3>
+                        <div class="settings-avatar-row">
+                            <div class="settings-avatar">👤</div>
+                            <button class="btn btn-outline btn-sm">Change Avatar</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Display Name</label>
+                                <input type="text" value="TraderOne" id="sName">
+                            </div>
+                            <div class="input-group">
+                                <label>Email</label>
+                                <input type="email" value="trader@example.com" id="sEmail">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Timezone</label>
+                                <select id="sTimezone">
+                                    <option>UTC</option>
+                                    <option selected>UTC+3 (Nairobi)</option>
+                                    <option>UTC+0 (London)</option>
+                                    <option>UTC-5 (New York)</option>
+                                    <option>UTC+8 (Singapore)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Currency</label>
+                                <select id="sCurrency">
+                                    <option selected>USD ($)</option>
+                                    <option>EUR (€)</option>
+                                    <option>GBP (£)</option>
+                                    <option>JPY (¥)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Bio</label>
+                            <textarea rows="2" id="sBio">Forex trader focused on EUR/USD and gold. Learning to master emotions.</textarea>
+                        </div>
+                        <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                    <!-- Notifications Tab -->
+                    <div class="settings-panel" id="panel-notifications">
+                        <h3>Notification Preferences</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Trade Alerts</div>
+                                <div class="setting-desc">Get notified when trades open/close</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Mind Scan Reminders</div>
+                                <div class="setting-desc">Daily reminder to complete your mind scan</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Guardian Warnings</div>
+                                <div class="setting-desc">Alert when a guardian rule is triggered</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">AI Coach Insights</div>
+                                <div class="setting-desc">Weekly summary from your AI coach</div>
+                            </div>
+                            <div class="toggle-switch"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Email Digest</div>
+                                <div class="setting-desc">Daily/weekly performance email</div>
+                            </div>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+                    <!-- Trading Tab -->
+                    <div class="settings-panel" id="panel-trading">
+                        <h3>Trading Preferences</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Default Risk Per Trade (%)</label>
+                                <input type="number" value="1" step="0.1" id="sRisk">
+                            </div>
+                            <div class="input-group">
+                                <label>Max Daily Loss (%)</label>
+                                <input type="number" value="2" step="0.1" id="sMaxLoss">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Default Stop Loss (pips)</label>
+                                <input type="number" value="20" id="sDefaultSL">
+                            </div>
+                            <div class="input-group">
+                                <label>Default Take Profit (pips)</label>
+                                <input type="number" value="40" id="sDefaultTP">
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Auto-calculate Position Size</div>
+                                <div class="setting-desc">Use the calculator automatically on new trades</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Require Mind Scan Before Trading</div>
+                                <div class="setting-desc">Block new trades if readiness is below 50</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <button class="btn btn-primary" id="saveTradingBtn">Save Trading Settings</button>
+                    </div>
+                    <!-- AI Coach Tab -->
+                    <div class="settings-panel" id="panel-ai">
+                        <h3>AI Coach Settings</h3>
+                        <div class="input-group">
+                            <label>Coach Personality</label>
+                            <div class="personality-options">
+                                <div class="personality-card active">
+                                    <div class="p-emoji">🧪</div>
+                                    <div class="p-name">Slime (Balanced)</div>
+                                    <div class="p-desc">Supportive but firm. Best for most traders.</div>
+                                </div>
+                                <div class="personality-card">
+                                    <div class="p-emoji">🎖️</div>
+                                    <div class="p-name">Drill Sergeant</div>
+                                    <div class="p-desc">Tough love. No excuses. For disciplined traders.</div>
+                                </div>
+                                <div class="personality-card">
+                                    <div class="p-emoji">🧘</div>
+                                    <div class="p-name">Zen Master</div>
+                                    <div class="p-desc">Calm and philosophical. Focus on mindset.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>AI Response Length</label>
+                            <select id="sResponseLength">
+                                <option>Short (1-2 sentences)</option>
+                                <option selected>Medium (3-5 sentences)</option>
+                                <option>Detailed (paragraph)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Share Journal with AI</div>
+                                <div class="setting-desc">Allow AI to read your journal for better coaching</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <button class="btn btn-primary" id="saveAIBtn">Save AI Settings</button>
+                    </div>
+                    <!-- Security Tab -->
+                    <div class="settings-panel" id="panel-security">
+                        <h3>Security</h3>
+                        <div class="input-group">
+                            <label>Current Password</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>New Password</label>
+                                <input type="password" placeholder="••••••••">
+                            </div>
+                            <div class="input-group">
+                                <label>Confirm Password</label>
+                                <input type="password" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Two-Factor Authentication</div>
+                                <div class="setting-desc">Require SMS code on login</div>
+                            </div>
+                            <div class="toggle-switch"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-title">Login Notifications</div>
+                                <div class="setting-desc">Email alert on new device login</div>
+                            </div>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="setting-item danger">
+                            <div class="setting-info">
+                                <div class="setting-title" style="color:#FF4757">Delete Account</div>
+                                <div class="setting-desc">Permanently remove all data</div>
+                            </div>
+                            <button class="btn btn-outline" style="border-color:#FF4757;color:#FF4757">Delete</button>
+                        </div>
+                        <button class="btn btn-primary" id="saveSecurityBtn">Update Security</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Pricing</span>
+                <h2>Choose Your Plan</h2>
+                <p>Start free. Upgrade when you're ready to trade like a pro.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">
+                        <span class="currency">$</span>0
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-desc">Perfect for new traders learning the ropes.</p>
+                    <ul class="pricing-features">
+                        <li>✅ Basic Mind Scan</li>
+                        <li>✅ Position Size Calculator</li>
+                        <li>✅ Risk of Ruin Tool</li>
+                        <li>✅ 3 AI Coach chats/day</li>
+                        <li>❌ Guardian Rules</li>
+                        <li>❌ MT5 Integration</li>
+                        <li>❌ Advanced Analytics</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block">Get Started Free</button>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">
+                        <span class="currency">$</span>29
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-desc">For serious traders who want an edge.</p>
+                    <ul class="pricing-features">
+                        <li>✅ Advanced Mind Scan</li>
+                        <li>✅ All Calculators</li>
+                        <li>✅ Unlimited AI Coach</li>
+                        <li>✅ Guardian Rules</li>
+                        <li>✅ MT5 Integration</li>
+                        <li>✅ Trading Journal</li>
+                        <li>❌ Team Features</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block">Start Pro Trial</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-name">Elite</div>
+                    <div class="pricing-price">
+                        <span class="currency">$</span>79
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-desc">Full power for professional traders.</p>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Pro</li>
+                        <li>✅ Custom AI Training</li>
+                        <li>✅ API Access</li>
+                        <li>✅ Priority Support</li>
+                        <li>✅ Team Dashboard</li>
+                        <li>✅ White-label Options</li>
+                        <li>✅ 1-on-1 Coaching</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="nav-brand">
+                        <div class="logo-icon">🧪</div>
+                        <span class="logo-text">Slime<span class="logo-accent">Trades</span></span>
+                    </div>
+                    <p>The future of trading psychology. Powered by AI. Built for traders.</p>
+                    <div class="social-links">
+                        <a href="#">𝕏</a>
+                        <a href="#">in</a>
+                        <a href="#">📺</a>
+                        <a href="#">💬</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <a href="#">Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">Integrations</a>
+                    <a href="#">Changelog</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <a href="#">Blog</a>
+                    <a href="#">Trading Guide</a>
+                    <a href="#">API Docs</a>
+                    <a href="#">Community</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Slime Trades. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

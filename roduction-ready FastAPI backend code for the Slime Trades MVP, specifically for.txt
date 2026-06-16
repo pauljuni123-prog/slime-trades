@@ -1,0 +1,784 @@
+# ============================================================================
+# FILE: backend/requirements.txt
+# ============================================================================
+
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+sqlalchemy[asyncio]==2.0.28
+asyncpg==0.29.0
+alembic==1.13.1
+pydantic==2.6.4
+pydantic-settings==2.2.1
+python-jose[cryptography]==3.3.0
+passlib[argon2]==1.7.4
+argon2-cffi==23.1.0
+python-multipart==0.0.9
+email-validator==2.1.1
+redis==5.0.3
+httpx==0.27.0# ============================================================================
+# FILE: backend/app/config.py
+# ============================================================================
+
+from pydantic_settings import BaseSettings
+from functools import lru_cache
+
+
+class Settings(BaseSettings):
+    # Application
+    APP_NAME: str = "Slime Trades API"
+    DEBUG: bool = False
+    API_V1_PREFIX: str = "/v1"
+    
+    # Security
+    SECRET_KEY: str  # openssl rand -hex 32
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    ALGORITHM: str = "HS256"
+    
+    # Argon2id
+    ARGON2_TIME_COST: int = 3
+    ARGON2_MEMORY_COST: int = 65536  # 64 MB
+    ARGON2_PARALLELISM: int = 4
+    
+    # Database
+    DATABASE_URL: str  # postgresql+asyncpg://user:pass@localhost/slime
+    
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379/0"
+    
+    # CORS
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "https://app.slime.trades"]
+    
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings = get_settings()# ============================================================================
+# FILE: backend/app/db/base.py
+# ============================================================================
+
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import declarative_base
+from app.config import settings
+
+# Async engine
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=settings.DEBUG,
+    future=True,
+    pool_size=20,
+    max_overflow=10,
+    pool_pre_ping=True,
+)
+
+# Session factory
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False,
+)
+
+# Declarative base
+Base = declarative_base()
+
+
+async def get_db() -> AsyncSession:
+    """Dependency: yields async DB session per request."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()# ============================================================================
+# FILE: backend/app/models/user.py
+# ============================================================================
+
+import uuid
+from datetime import datetime
+from typing import Optional
+
+from sqlalchemy import (
+    Column, String, Boolean, DateTime, Text, JSON, ARRAY, Integer, DECIMAL, INET, BYTEA
+)
+from sqlalchemy.dialects.postgresql import UUID, INET as PGInet
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from app.db.base import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email = Column(String(255), nullable=False, unique=True)
+    password_hash = Column(Text, nullable=False)
+    tier = Column(String(20), default="FREE")
+    email_verified = Column(Boolean, default=False)
+    mfa_enabled = Column(Boolean, default=False)
+    mfa_secret_encrypted = Column(BYTEA)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    profile = relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    settings = relationship("UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
+    mind_scans = relationship("MindScan", back_populates="user", cascade="all, delete-orphan")
+
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False, unique=True)
+    display_name = Column(String(100))
+    bio = Column(Text)
+    trading_style = Column(String(30))
+    markets_traded = Column(ARRAY(String), default=list)
+    risk_tolerance = Column(String(30), default="MODERATE")
+    psychological_triggers = Column(ARRAY(String), default=list)
+    emergency_contact = Column(JSON)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User", back_populates="profile")
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False, unique=True)
+    guardian_enabled = Column(Boolean, default=True)
+    daily_loss_limit = Column(DECIMAL(18, 8), default=500.00)
+    max_daily_trades = Column(Integer, default=10)
+    mind_scan_required = Column(Boolean, default=False)
+    theme = Column(String(10), default="DARK")
+    language = Column(String(5), default="en")
+    notification_prefs = Column(JSON, default=dict)
+    privacy_consents = Column(JSON, default=dict)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User", back_populates="settings")
+
+
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False)
+    session_token_hash = Column(Text, nullable=False)
+    ip_address = Column(String(45))  # Store as string; INET type varies by driver
+    user_agent = Column(Text)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    revoked = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="sessions")# ============================================================================
+# FILE: backend/app/schemas/auth.py
+# ============================================================================
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import Optional
+import re
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
+    display_name: str = Field(..., min_length=1, max_length=100)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, v: str) -> str:
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must contain at least one uppercase letter")
+        if not re.search(r"[a-z]", v):
+            raise ValueError("Password must contain at least one lowercase letter")
+        if not re.search(r"\d", v):
+            raise ValueError("Password must contain at least one digit")
+        return v
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class AuthResponse(BaseModel):
+    user_id: str
+    email: str
+    display_name: Optional[str]
+    tier: str
+
+
+class TokenPayload(BaseModel):
+    sub: str  # user_id
+    email: str
+    tier: str
+    exp: Optional[int] = None
+    iat: Optional[int] = None
+    jti: Optional[str] = None# ============================================================================
+# FILE: backend/app/schemas/user.py
+# ============================================================================
+
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from decimal import Decimal
+
+
+class UserProfileSchema(BaseModel):
+    display_name: Optional[str] = Field(None, max_length=100)
+    bio: Optional[str] = None
+    trading_style: Optional[str] = None
+    markets_traded: Optional[List[str]] = None
+    risk_tolerance: Optional[str] = None
+    psychological_triggers: Optional[List[str]] = None
+    emergency_contact: Optional[dict] = None
+
+    class Config:
+        from_attributes = True
+
+
+class UserSettingsSchema(BaseModel):
+    guardian_enabled: Optional[bool] = True
+    daily_loss_limit: Optional[Decimal] = Decimal("500.00")
+    max_daily_trades: Optional[int] = 10
+    mind_scan_required: Optional[bool] = False
+    theme: Optional[str] = "DARK"
+    language: Optional[str] = "en"
+    notification_prefs: Optional[dict] = None
+    privacy_consents: Optional[dict] = None
+
+    class Config:
+        from_attributes = True
+
+
+class UserMeResponse(BaseModel):
+    id: str
+    email: str
+    tier: str
+    email_verified: bool
+    created_at: Optional[str]
+    profile: Optional[UserProfileSchema] = None
+    settings: Optional[UserSettingsSchema] = None
+
+    class Config:
+        from_attributes = True# ============================================================================
+# FILE: backend/app/schemas/mind_scan.py
+# ============================================================================
+
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional
+from datetime import datetime
+
+
+class MindScanCreate(BaseModel):
+    scan_type: str = Field(default="PRE", pattern="^(PRE|POST)$")
+    stress_level: int = Field(..., ge=1, le=10)
+    confidence_score: int = Field(..., ge=1, le=10)
+    fomo_level: int = Field(..., ge=1, le=5)
+    revenge_urge: int = Field(..., ge=1, le=5)
+    fatigue_level: int = Field(..., ge=1, le=5)
+    notes: Optional[str] = Field(None, max_length=500)
+
+    @field_validator("notes")
+    @classmethod
+    def validate_notes_length(cls, v: Optional[str]) -> Optional[str]:
+        if v and len(v) > 500:
+            raise ValueError("Notes must be 500 characters or less")
+        return v
+
+
+class MindScanResponse(BaseModel):
+    id: str
+    user_id: str
+    scan_type: str
+    stress_level: int
+    confidence_score: int
+    fomo_level: int
+    revenge_urge: int
+    fatigue_level: int
+    readiness_score: int
+    notes: Optional[str]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class MindScanListResponse(BaseModel):
+    data: list[MindScanResponse]
+    total: int# ============================================================================
+# FILE: backend/app/services/auth_service.py
+# ============================================================================
+
+from datetime import datetime, timezone, timedelta
+from typing import Optional, Tuple
+from uuid import uuid4
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException, status
+
+from app.models.user import User, UserProfile, UserSettings, UserSession
+from app.schemas.auth import RegisterRequest, LoginRequest
+from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
+from app.config import settings
+
+
+class AuthService:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def register(self, data: RegisterRequest) -> Tuple[User, str, str]:
+        """Register new user with profile and settings."""
+        # Check email uniqueness
+        result = await self.db.execute(select(User).where(User.email == data.email))
+        if result.scalar_one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered",
+            )
+        
+        # Create user
+        user = User(
+            id=uuid4(),
+            email=data.email.lower().strip(),
+            password_hash=hash_password(data.password),
+            tier="FREE",
+        )
+        self.db.add(user)
+        await self.db.flush()  # Get user.id without full commit
+        
+        # Create profile
+        profile = UserProfile(
+            user_id=user.id,
+            display_name=data.display_name,
+        )
+        self.db.add(profile)
+        
+        # Create settings
+        user_settings = UserSettings(
+            user_id=user.id,
+        )
+        self.db.add(user_settings)
+        
+        await self.db.commit()
+        await self.db.refresh(user)
+        
+        # Generate tokens
+        access_token = create_access_token(str(user.id), user.email, user.tier)
+        refresh_token = create_refresh_token(str(user.id))
+        
+        # Store session
+        session = UserSession(
+            user_id=user.id,
+            session_token_hash=settings.SECRET_KEY + refresh_token,  # Simplified hash
+            ip_address=None,
+            user_agent=None,
+            expires_at=datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        )
+        self.db.add(session)
+        await self.db.commit()
+        
+        return user, access_token, refresh_token
+
+    async def login(self, data: LoginRequest, ip_address: Optional[str] = None, user_agent: Optional[str] = None) -> Tuple[User, str, str]:
+        """Authenticate user and issue tokens."""
+        result = await self.db.execute(select(User).where(User.email == data.email.lower().strip()))
+        user = result.scalar_one_or_none()
+        
+        if not user or not verify_password(data.password, user.password_hash):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password",
+            )
+        
+        if user.deleted_at:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Account deactivated",
+            )
+        
+        # Generate tokens
+        access_token = create_access_token(str(user.id), user.email, user.tier)
+        refresh_token = create_refresh_token(str(user.id))
+        
+        # Store session
+        session = UserSession(
+            user_id=user.id,
+            session_token_hash=settings.SECRET_KEY + refresh_token,
+            ip_address=ip_address,
+            user_agent=user_agent,
+            expires_at=datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        )
+        self.db.add(session)
+        await self.db.commit()
+        
+        return user, access_token, refresh_token
+
+    async def refresh(self, refresh_token: str) -> str:
+        """Issue new access token from valid refresh token."""
+        from app.utils.security import decode_token
+        
+        payload = decode_token(refresh_token)
+        if not payload or payload.get("type") != "refresh":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token",
+            )
+        
+        user_id = payload.get("sub")
+        result = await self.db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        
+        if not user or user.deleted_at:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+            )
+        
+        # TODO: Check Redis blacklist for revoked refresh tokens
+        
+        new_access_token = create_access_token(str(user.id), user.email, user.tier)
+        return new_access_token
+
+    async def logout(self, user_id: str, refresh_token: Optional[str] = None) -> None:
+        """Revoke user session."""
+        # TODO: Add refresh token to Redis blacklist
+        # For now, revoke all active sessions for user
+        from sqlalchemy import update
+        await self.db.execute(
+            update(UserSession)
+            .where(UserSession.user_id == user_id, UserSession.revoked == False)
+            .values(revoked=True)
+        )
+        await self.db.commit()# ============================================================================
+# FILE: backend/app/services/mind_scan_service.py
+# ============================================================================
+
+from typing import List, Optional
+from uuid import uuid4
+from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.user import User
+from app.models.mind_scan import MindScan
+from app.schemas.mind_scan import MindScanCreate, MindScanResponse
+
+
+class MindScanService:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def create(self, user: User, data: MindScanCreate) -> MindScan:
+        """Create new mind scan. Readiness score computed by DB."""
+        scan = MindScan(
+            id=uuid4(),
+            user_id=user.id,
+            scan_type=data.scan_type,
+            stress_level=data.stress_level,
+            confidence_score=data.confidence_score,
+            fomo_level=data.fomo_level,
+            revenge_urge=data.revenge_urge,
+            fatigue_level=data.fatigue_level,
+            notes=data.notes,
+        )
+        self.db.add(scan)
+        await self.db.commit()
+        await self.db.refresh(scan)
+        
+        # Re-fetch to get the generated readiness_score
+        result = await self.db.execute(
+            select(MindScan).where(MindScan.id == scan.id)
+        )
+        scan = result.scalar_one()
+        return scan
+
+    async def get_latest(self, user: User) -> Optional[MindScan]:
+        """Get most recent mind scan for user."""
+        result = await self.db.execute(
+            select(MindScan)
+            .where(MindScan.user_id == user.id)
+            .order_by(MindScan.created_at.desc())
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
+    async def list_scans(self, user: User, limit: int = 30, offset: int = 0) -> tuple[List[MindScan], int]:
+        """List mind scans with pagination."""
+        result = await self.db.execute(
+            select(MindScan)
+            .where(MindScan.user_id == user.id)
+            .order_by(MindScan.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        scans = result.scalars().all()
+        
+        # Total count
+        count_result = await self.db.execute(
+            select(func.count(MindScan.id)).where(MindScan.user_id == user.id)
+        )
+        total = count_result.scalar_one()
+        
+        return list(scans), total
+
+    async def get_trends(self, user: User, days: int = 7) -> dict:
+        """Get 7-day emotional trend data."""
+        from datetime import datetime, timezone, timedelta
+        
+        since = datetime.now(timezone.utc) - timedelta(days=days)
+        
+        result = await self.db.execute(
+            select(MindScan)
+            .where(
+                MindScan.user_id == user.id,
+                MindScan.created_at >= since
+            )
+            .order_by(MindScan.created_at.asc())
+        )
+        scans = result.scalars().all()
+        
+        return {
+            "stress_levels": [s.stress_level for s in scans],
+            "confidence_scores": [s.confidence_score for s in scans],
+            "readiness_scores": [s.readiness_score for s in scans],
+            "dates": [s.created_at.isoformat() for s in scans],
+            "count": len(scans),
+        }# ============================================================================
+# FILE: backend/app/routers/users.py
+# ============================================================================
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.base import get_db
+from app.dependencies import get_current_active_user
+from app.models.user import User
+from app.schemas.user import UserMeResponse, UserProfileSchema, UserSettingsSchema
+from app.services.user_service import UserService
+
+router = APIRouter(prefix="/users", tags=["Users"])
+
+
+@router.get("/me", response_model=UserMeResponse)
+async def get_me(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get current user with profile and settings."""
+    service = UserService(db)
+    return await service.get_me(current_user)
+
+
+@router.put("/me", response_model=UserMeResponse)
+async def update_me(
+    data: UserProfileSchema,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update current user's profile."""
+    service = UserService(db)
+    await service.update_profile(current_user, data)
+    return await service.get_me(current_user)
+
+
+@router.get("/profile", response_model=UserProfileSchema)
+async def get_profile(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get user profile."""
+    service = UserService(db)
+    user_data = await service.get_me(current_user)
+    return user_data.profile or UserProfileSchema()
+
+
+@router.put("/profile", response_model=UserProfileSchema)
+async def update_profile(
+    data: UserProfileSchema,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update user profile."""
+    service = UserService(db)
+    return await service.update_profile(current_user, data)
+
+
+@router.get("/settings", response_model=UserSettingsSchema)
+async def get_settings(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get user settings."""
+    service = UserService(db)
+    user_data = await service.get_me(current_user)
+    return user_data.settings or UserSettingsSchema()
+
+
+@router.put("/settings", response_model=UserSettingsSchema)
+async def update_settings(
+    data: UserSettingsSchema,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update user settings."""
+    service = UserService(db)
+    return await service.update_settings(current_user, data)# ============================================================================
+# FILE: backend/app/routers/mind_scan.py
+# ============================================================================
+
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+
+from app.db.base import get_db
+from app.dependencies import get_current_active_user
+from app.models.user import User
+from app.models.mind_scan import MindScan
+from app.schemas.mind_scan import MindScanCreate, MindScanResponse, MindScanListResponse
+from app.services.mind_scan_service import MindScanService
+
+router = APIRouter(prefix="/mind-scans", tags=["Mind Scans"])
+
+
+@router.post("", response_model=MindScanResponse, status_code=status.HTTP_201_CREATED)
+async def create_mind_scan(
+    data: MindScanCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Submit a new emotional check-in."""
+    service = MindScanService(db)
+    scan = await service.create(current_user, data)
+    return MindScanResponse.model_validate(scan)
+
+
+@router.get("", response_model=MindScanListResponse)
+async def list_mind_scans(
+    limit: int = 30,
+    offset: int = 0,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get user's mind scan history."""
+    service = MindScanService(db)
+    scans, total = await service.list_scans(current_user, limit=limit, offset=offset)
+    return MindScanListResponse(
+        data=[MindScanResponse.model_validate(s) for s in scans],
+        total=total,
+    )
+
+
+@router.get("/latest", response_model=MindScanResponse)
+async def get_latest_mind_scan(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get most recent mind scan."""
+    service = MindScanService(db)
+    scan = await service.get_latest(current_user)
+    if not scan:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="No mind scans found")
+    return MindScanResponse.model_validate(scan)
+
+
+@router.get("/trends")
+async def get_mind_scan_trends(
+    days: int = 7,
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get emotional trend data for charting."""
+    service = MindScanService(db)
+    return await service.get_trends(current_user, days=days)# ============================================================================
+# FILE: backend/app/main.py
+# ============================================================================
+
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+
+from app.config import settings
+from app.routers import auth, users, mind_scan
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan: startup and shutdown."""
+    # Startup: verify DB connection
+    from app.db.base import engine
+    from sqlalchemy import text
+    async with engine.connect() as conn:
+        await conn.execute(text("SELECT 1"))
+        print("✅ Database connected")
+    
+    yield
+    
+    # Shutdown
+    await engine.dispose()
+    print("🔌 Database disconnected")
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    description="Slime Trades MVP API — Trading psychology and emotional discipline",
+    version="1.0.0",
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
+    lifespan=lifespan,
+)
+
+# CORS: allow frontend origin with credentials
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["X-Request-ID"],
+)
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Include routers
+app.include_router(auth.router, prefix=settings.API_V1_PREFIX)
+app.include_router(users.router, prefix=settings.API_V1_PREFIX)
+app.include_router(mind_scan.router, prefix=settings.API_V1_PREFIX)
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for load balancers."""
+    return {
+        "status": "healthy",
+        "service": "slime-trades-api",
+        "version": "1.0.0",
+    }
+
+
+@app.get("/")
+async def root():
+    """API root."""
+    return {
+        "name": settings.APP_NAME,
+        "version": "1.0.0",
+        "docs": "/docs" if settings.DEBUG else None,
+    }# ============================================================================
+# FILE: backend/app/__init__.py
+# (empty)
+# ============================================================================

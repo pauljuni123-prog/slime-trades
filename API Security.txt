@@ -1,0 +1,21 @@
+# API Gateway Security Policy
+rate_limiting:
+  default: 1000 requests/minute per user
+  burst: 100 requests/10 seconds
+  trade_sync: 60 requests/minute
+  guardian_query: 300 requests/minute
+
+authentication:
+  required: true
+  methods: [JWT, API_KEY]
+  mfa_required_for: [BROKER_CONNECT, SETTINGS_CHANGE, OVERRIDE]
+
+authorization:
+  rbac_enabled: true
+  roles: [TRADER, ADMIN, SUPPORT, SYSTEM]
+
+input_validation:
+  max_payload_size: 1MB
+  schema_validation: strict
+  sql_injection: parameterized_queries_only
+  xss_protection: enabled

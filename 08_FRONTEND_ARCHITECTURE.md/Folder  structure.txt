@@ -1,0 +1,216 @@
+slime-trades-frontend/
+├── app/                                    # Next.js 14 App Router
+│   ├── (auth)/                            # Auth route group (no sidebar)
+│   │   ├── layout.tsx
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── register/
+│   │   │   └── page.tsx
+│   │   └── forgot-password/
+│   │       └── page.tsx
+│   │
+│   ├── (dashboard)/                       # Dashboard route group (with sidebar)
+│   │   ├── layout.tsx
+│   │   ├── page.tsx                       # /dashboard
+│   │   ├── mind-scan/
+│   │   │   └── page.tsx
+│   │   ├── sanctuary/
+│   │   │   └── page.tsx
+│   │   ├── journal/
+│   │   │   └── page.tsx
+│   │   ├── guardian/
+│   │   │   └── page.tsx
+│   │   ├── ai/
+│   │   │   └── page.tsx
+│   │   ├── analytics/
+│   │   │   └── page.tsx
+│   │   ├── settings/
+│   │   │   └── page.tsx
+│   │   ├── profile/
+│   │   │   └── page.tsx
+│   │   └── billing/
+│   │       └── page.tsx
+│   │
+│   ├── (landing)/                         # Marketing pages (no auth)
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── admin/                             # Admin panel
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── api/                               # Next.js API routes (proxy to backend)
+│   │   ├── auth/
+│   │   │   └── [...nextauth]/route.ts     # Auth.js / NextAuth
+│   │   ├── trades/
+│   │   │   └── route.ts
+│   │   └── ws/
+│   │       └── route.ts
+│   │
+│   ├── layout.tsx                         # Root layout
+│   ├── globals.css                        # Tailwind + custom CSS
+│   └── error.tsx                          # Global error boundary
+│
+├── components/                            # React components
+│   ├── ui/                                # shadcn/ui components (auto-generated)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── input.tsx
+│   │   ├── dialog.tsx
+│   │   ├── toast.tsx
+│   │   ├── skeleton.tsx
+│   │   ├── tabs.tsx
+│   │   ├── slider.tsx
+│   │   ├── progress.tsx
+│   │   ├── badge.tsx
+│   │   ├── tooltip.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── sheet.tsx
+│   │   ├── scroll-area.tsx
+│   │   ├── separator.tsx
+│   │   ├── avatar.tsx
+│   │   ├── select.tsx
+│   │   ├── switch.tsx
+│   │   ├── calendar.tsx
+│   │   └── table.tsx
+│   │
+│   ├── dashboard/                         # Dashboard-specific components
+│   │   ├── ReadinessGauge.tsx
+│   │   ├── GuardianStatus.tsx
+│   │   ├── EmotionalEquityCurve.tsx
+│   │   ├── ActiveTradesTable.tsx
+│   │   ├── AIInsightsCard.tsx
+│   │   ├── SanctuaryQuickLaunch.tsx
+│   │   ├── JournalSnippets.tsx
+│   │   ├── WeeklyScore.tsx
+│   │   ├── MarketContext.tsx
+│   │   └── QuickActions.tsx
+│   │
+│   ├── mind-scan/                         # Mind Scan components
+│   │   ├── QuestionCard.tsx
+│   │   ├── LikertScale.tsx
+│   │   ├── ProgressDots.tsx
+│   │   ├── TipBox.tsx
+│   │   ├── ScanResults.tsx
+│   │   └── BiometricSync.tsx
+│   │
+│   ├── sanctuary/                           # Sanctuary components
+│   │   ├── BreathingVisualizer.tsx
+│   │   ├── TechniqueSelector.tsx
+│   │   ├── HRMonitor.tsx
+│   │   ├── SessionTimer.tsx
+│   │   ├── AudioPlayer.tsx
+│   │   └── CompletionCelebration.tsx
+│   │
+│   ├── journal/                             # Journal components
+│   │   ├── JournalEntryCard.tsx
+│   │   ├── EntryComposer.tsx
+│   │   ├── TagSelector.tsx
+│   │   ├── AISummary.tsx
+│   │   ├── AttachmentUploader.tsx
+│   │   └── SearchBar.tsx
+│   │
+│   ├── guardian/                            # Guardian components
+│   │   ├── RuleCard.tsx
+│   │   ├── RuleEditor.tsx
+│   │   ├── OverrideLog.tsx
+│   │   ├── StatusToggle.tsx
+│   │   ├── ViolationFeed.tsx
+│   │   └── LockoutModal.tsx
+│   │
+│   ├── ai/                                  # AI components
+│   │   ├── ChatInterface.tsx
+│   │   ├── MessageBubble.tsx
+│   │   ├── StreamingText.tsx
+│   │   ├── QuickReply.tsx
+│   │   ├── InsightCard.tsx
+│   │   ├── ProtocolAssignment.tsx
+│   │   └── VoiceInput.tsx
+│   │
+│   ├── shared/                              # Shared components
+│   │   ├── AmbientGlow.tsx
+│   │   ├── EmotionalIndicator.tsx
+│   │   ├── LoadingState.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── ErrorFallback.tsx
+│   │   ├── DataTable.tsx
+│   │   ├── ChartWrapper.tsx
+│   │   ├── NotificationToast.tsx
+│   │   ├── Modal.tsx
+│   │   └── ConfirmDialog.tsx
+│   │
+│   └── layout/                              # Layout components
+│       ├── TopNav.tsx
+│       ├── Sidebar.tsx
+│       ├── BottomNav.tsx
+│       ├── DashboardGrid.tsx
+│       └── MobileDrawer.tsx
+│
+├── hooks/                                   # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useWebSocket.ts
+│   ├── useGuardian.ts
+│   ├── useMindScan.ts
+│   ├── useTrades.ts
+│   ├── useAI.ts
+│   ├── useEmotions.ts
+│   ├── useJournal.ts
+│   ├── useSanctuary.ts
+│   ├── useNotifications.ts
+│   ├── useDashboard.ts
+│   ├── useAnalytics.ts
+│   ├── useBilling.ts
+│   ├── useMediaQuery.ts
+│   ├── useDebounce.ts
+│   ├── useLocalStorage.ts
+│   └── useSessionStorage.ts
+│
+├── stores/                                  # Zustand stores
+│   ├── authStore.ts
+│   ├── dashboardStore.ts
+│   ├── tradeStore.ts
+│   ├── emotionStore.ts
+│   ├── aiStore.ts
+│   ├── uiStore.ts
+│   ├── guardianStore.ts
+│   └── journalStore.ts
+│
+├── lib/                                     # Utilities & configuration
+│   ├── api-client.ts
+│   ├── websocket.ts
+│   ├── encryption.ts
+│   ├── validators.ts
+│   ├── constants.ts
+│   ├── utils.ts
+│   ├── date-utils.ts
+│   ├── number-utils.ts
+│   └── chart-utils.ts
+│
+├── types/                                   # TypeScript types
+│   ├── api.ts
+│   ├── models.ts
+│   ├── emotions.ts
+│   ├── guardian.ts
+│   ├── ai.ts
+│   ├── trade.ts
+│   ├── journal.ts
+│   └── components.ts
+│
+├── public/                                  # Static assets
+│   ├── images/
+│   ├── icons/
+│   ├── fonts/
+│   └── manifest.json
+│
+├── tests/                                   # Test files
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── .env.local
+├── .env.production
+├── next.config.js
+├── tailwind.config.ts
+├── tsconfig.json
+├── package.json
+└── README.md
