@@ -5,6 +5,11 @@ from app.routers import auth, mind_scan, ai_coach, guardian, mt5
 
 app = FastAPI(title="Slime Trades API", version="0.1.0")
 
+@app.get("/")
+def root():
+    return {"message": "Welcome to Slime Trades API"}
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
