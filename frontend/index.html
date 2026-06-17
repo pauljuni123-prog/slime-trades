@@ -4,183 +4,253 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slime Trades</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #111936;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1a237e;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #00e676; }
+        .nav-links a {
+            color: #8892b0;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: #00e676; }
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a237e 100%);
+        }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero p { color: #8892b0; font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; }
+        .btn {
+            background: #00e676;
+            color: #0a0e27;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: #111936;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #1a237e;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #00e676;
+        }
+        .feature-card h3 { color: #00e676; margin-bottom: 0.5rem; }
+        .feature-card p { color: #8892b0; }
+        .status-bar {
+            background: #111936;
+            padding: 1rem 2rem;
+            text-align: center;
+            border-top: 1px solid #1a237e;
+        }
+        #api-status { color: #00e676; }
+        .hidden { display: none; }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #111936;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%; max-width: 400px;
+            border: 1px solid #1a237e;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: #0a0e27;
+            border: 1px solid #1a237e;
+            color: #fff;
+            border-radius: 6px;
+        }
+        .modal-content button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: #00e676;
+            color: #0a0e27;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #8892b0;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Auth Screen -->
-        <div id="auth-screen" class="screen active">
-            <div class="auth-container">
-                <div class="logo">
-                    <div class="logo-icon">??</div>
-                    <h1>Slime Trades</h1>
-                    <p>AI-Powered Trading Platform</p>
-                </div>
-                
-                <div class="auth-tabs">
-                    <button class="tab-btn active" onclick="showTab('login')">Login</button>
-                    <button class="tab-btn" onclick="showTab('register')">Register</button>
-                </div>
-
-                <form id="login-form" class="auth-form active">
-                    <input type="email" id="login-email" placeholder="Email" required>
-                    <input type="password" id="login-password" placeholder="Password" required>
-                    <button type="submit" class="btn-primary">Login</button>
-                    <p class="error-msg" id="login-error"></p>
-                </form>
-
-                <form id="register-form" class="auth-form">
-                    <input type="email" id="reg-email" placeholder="Email" required>
-                    <input type="text" id="reg-name" placeholder="Display Name" required>
-                    <input type="password" id="reg-password" placeholder="Password" required>
-                    <button type="submit" class="btn-primary">Create Account</button>
-                    <p class="error-msg" id="reg-error"></p>
-                </form>
-            </div>
+    <nav class="navbar">
+        <div class="logo"> Slime Trades</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#" onclick="showLogin()">Login</a>
+            <a href="#" onclick="showRegister()">Register</a>
         </div>
+    </nav>
 
-        <!-- Dashboard Screen -->
-        <div id="dashboard-screen" class="screen">
-            <nav class="sidebar">
-                <div class="sidebar-header">
-                    <div class="logo-icon">??</div>
-                    <span>Slime Trades</span>
-                </div>
-                <ul class="nav-links">
-                    <li class="active" onclick="showPage('dashboard')">?? Dashboard</li>
-                    <li onclick="showPage('mind-scan')">?? Mind Scan</li>
-                    <li onclick="showPage('ai-coach')">?? AI Coach</li>
-                    <li onclick="showPage('guardian')">??? Guardian</li>
-                    <li onclick="showPage('mt5')">?? MT5</li>
-                </ul>
-                <div class="sidebar-footer">
-                    <span id="user-name">Trader</span>
-                    <button onclick="logout()" class="btn-logout">Logout</button>
-                </div>
-            </nav>
+    <section class="hero">
+        <h1>Trade Smarter with AI</h1>
+        <p>Advanced trading platform with AI coaching, mind scans, and MT5 integration.</p>
+        <button class="btn" onclick="showRegister()">Get Started</button>
+    </section>
 
-            <main class="main-content">
-                <!-- Dashboard Page -->
-                <div id="page-dashboard" class="page active">
-                    <h2>Dashboard</h2>
-                    <div class="cards-grid">
-                        <div class="card">
-                            <h3>Account Balance</h3>
-                            <p class="big-number" id="balance">$0.00</p>
-                        </div>
-                        <div class="card">
-                            <h3>Readiness Score</h3>
-                            <p class="big-number" id="readiness">--</p>
-                        </div>
-                        <div class="card">
-                            <h3>Open Trades</h3>
-                            <p class="big-number" id="open-trades">0</p>
-                        </div>
-                        <div class="card">
-                            <h3>Today's P&L</h3>
-                            <p class="big-number" id="today-pnl">$0.00</p>
-                        </div>
-                    </div>
-                </div>
+    <section class="features" id="features">
+        <div class="feature-card">
+            <h3> Mind Scan</h3>
+            <p>Analyze your trading psychology and behavioral patterns to improve decision making.</p>
+        </div>
+        <div class="feature-card">
+            <h3> AI Coach</h3>
+            <p>Get personalized trading advice and strategies powered by artificial intelligence.</p>
+        </div>
+        <div class="feature-card">
+            <h3> Guardian</h3>
+            <p>Risk management tools to protect your capital and manage drawdowns.</p>
+        </div>
+        <div class="feature-card">
+            <h3> MT5 Integration</h3>
+            <p>Seamlessly connect with MetaTrader 5 for automated trading execution.</p>
+        </div>
+    </section>
 
-                <!-- Mind Scan Page -->
-                <div id="page-mind-scan" class="page">
-                    <h2>?? Mind Scan</h2>
-                    <p class="subtitle">Check your emotional state before trading</p>
-                    
-                    <div class="scan-form">
-                        <div class="slider-group">
-                            <label>Stress Level (0-100)</label>
-                            <input type="range" id="stress" min="0" max="100" value="50">
-                            <span id="stress-val">50</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Focus Level (0-100)</label>
-                            <input type="range" id="focus" min="0" max="100" value="50">
-                            <span id="focus-val">50</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Confidence (0-100)</label>
-                            <input type="range" id="confidence" min="0" max="100" value="50">
-                            <span id="confidence-val">50</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Sleep Quality (0-100)</label>
-                            <input type="range" id="sleep" min="0" max="100" value="50">
-                            <span id="sleep-val">50</span>
-                        </div>
-                        <button onclick="submitMindScan()" class="btn-primary">Analyze My State</button>
-                    </div>
+    <div class="status-bar">
+        API Status: <span id="api-status">Checking...</span>
+    </div>
 
-                    <div id="scan-result" class="result-card hidden">
-                        <h3>Your Readiness Score: <span id="score">0</span></h3>
-                        <p class="label" id="label">--</p>
-                        <p class="advice" id="advice">--</p>
-                    </div>
-                </div>
-
-                <!-- AI Coach Page -->
-                <div id="page-ai-coach" class="page">
-                    <h2>?? AI Coach</h2>
-                    <div class="chat-container">
-                        <div id="chat-messages" class="chat-messages">
-                            <div class="message ai">
-                                <p>Hello! I am your AI trading coach. Ask me anything about trading strategies, risk management, or market analysis.</p>
-                            </div>
-                        </div>
-                        <div class="chat-input">
-                            <input type="text" id="chat-message" placeholder="Ask your coach..." onkeypress="if(event.key==='Enter')sendMessage()">
-                            <button onclick="sendMessage()" class="btn-primary">Send</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guardian Page -->
-                <div id="page-guardian" class="page">
-                    <h2>??? Guardian</h2>
-                    <div class="guardian-tools">
-                        <div class="card">
-                            <h3>Position Size Calculator</h3>
-                            <input type="number" id="ps-balance" placeholder="Account Balance ($)">
-                            <input type="number" id="ps-risk" placeholder="Risk % (e.g., 1)" value="1">
-                            <input type="number" id="ps-sl" placeholder="Stop Loss (pips)">
-                            <input type="text" id="ps-pair" placeholder="Pair (EUR/USD)" value="EUR/USD">
-                            <button onclick="calcPositionSize()" class="btn-primary">Calculate</button>
-                            <div id="ps-result" class="result hidden"></div>
-                        </div>
-
-                        <div class="card">
-                            <h3>Risk of Ruin Calculator</h3>
-                            <input type="number" id="rr-balance" placeholder="Account Balance ($)">
-                            <input type="number" id="rr-risk" placeholder="Risk % per trade">
-                            <input type="number" id="rr-winrate" placeholder="Win Rate % (e.g., 55)">
-                            <input type="number" id="rr-rr" placeholder="Reward:Risk Ratio (e.g., 2)">
-                            <button onclick="calcRiskOfRuin()" class="btn-primary">Calculate</button>
-                            <div id="rr-result" class="result hidden"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MT5 Page -->
-                <div id="page-mt5" class="page">
-                    <h2>?? MT5 Integration</h2>
-                    <div class="mt5-section">
-                        <div class="card">
-                            <h3>Connect Account</h3>
-                            <input type="text" id="mt5-broker" placeholder="Broker Name">
-                            <input type="text" id="mt5-server" placeholder="Server">
-                            <input type="text" id="mt5-account" placeholder="Account Number">
-                            <input type="password" id="mt5-password" placeholder="Password">
-                            <button onclick="connectMT5()" class="btn-primary">Connect</button>
-                        </div>
-                        <div id="mt5-accounts" class="accounts-list"></div>
-                    </div>
-                </div>
-            </main>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
+            <h2>Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="login()">Login</button>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
+            <h2>Register</h2>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Password">
+            <button onclick="register()">Create Account</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://slime-trades.onrender.com';
+
+        // Check API status on load
+        fetch(`${API_URL}/health`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('api-status').textContent = ' Connected';
+            })
+            .catch(() => {
+                document.getElementById('api-status').textContent = ' Offline';
+            });
+
+        function showLogin() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+        function showRegister() {
+            document.getElementById('registerModal').classList.remove('hidden');
+        }
+        function hideModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        async function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            try {
+                const res = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+                alert(res.ok ? 'Account created!' : JSON.stringify(data));
+                if (res.ok) hideModal('registerModal');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    alert('Login successful!');
+                    hideModal('loginModal');
+                } else {
+                    alert(JSON.stringify(data));
+                }
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Close modal on outside click
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
