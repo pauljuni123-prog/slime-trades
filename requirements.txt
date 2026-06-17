@@ -1,8 +1,8 @@
-bcrypt
-passlib
-python-jose
-python-multipart
-bcrypt
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+pydantic-settings
 bcrypt
 passlib
 python-jose
