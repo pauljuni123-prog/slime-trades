@@ -203,8 +203,16 @@
             document.getElementById(id).classList.add('hidden');
         }
 
+        function showError(data) {
+            if (data.detail) {
+                if (typeof data.detail === 'string') return data.detail;
+                if (Array.isArray(data.detail)) return data.detail.map(d => d.msg || d).join('\n');
+            }
+            return JSON.stringify(data);
+        }
+
         async function register() {
-            const name = document.getElementById('regName').value;
+            const display_name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             
@@ -212,13 +220,16 @@
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({ display_name, email, password })
                 });
                 const data = await res.json();
-                alert(res.ok ? 'Account created!' : JSON.stringify(data));
-                if (res.ok) hideModal('registerModal');
+                alert(res.ok ? 'Account created! Please log in.' : showError(data));
+                if (res.ok) {
+                    hideModal('registerModal');
+                    showLogin();
+                }
             } catch (e) {
-                alert('Error: ' + e.message);
+                alert('Network error: ' + e.message);
             }
         }
 
@@ -238,10 +249,10 @@
                     alert('Login successful!');
                     hideModal('loginModal');
                 } else {
-                    alert(JSON.stringify(data));
+                    alert(showError(data));
                 }
             } catch (e) {
-                alert('Error: ' + e.message);
+                alert('Network error: ' + e.message);
             }
         }
 
