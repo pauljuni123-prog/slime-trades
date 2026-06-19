@@ -19,15 +19,25 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #1a237e;
+            position: relative;
+            z-index: 100;
         }
         .logo { font-size: 1.5rem; font-weight: bold; color: #00e676; }
-        .nav-links a {
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a, .nav-links button {
             color: #8892b0;
             text-decoration: none;
-            margin-left: 2rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
             transition: color 0.3s;
+            padding: 0.5rem 1rem;
         }
-        .nav-links a:hover { color: #00e676; }
+        .nav-links a:hover, .nav-links button:hover { color: #00e676; }
         .hero {
             text-align: center;
             padding: 4rem 2rem;
@@ -75,7 +85,7 @@
             border-top: 1px solid #1a237e;
         }
         #api-status { color: #00e676; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -123,15 +133,15 @@
         <div class="logo"> Slime Trades</div>
         <div class="nav-links">
             <a href="#features">Features</a>
-            <a href="#" onclick="showLogin()">Login</a>
-            <a href="#" onclick="showRegister()">Register</a>
+            <button id="loginBtnNav">Login</button>
+            <button id="registerBtnNav">Register</button>
         </div>
     </nav>
 
     <section class="hero">
         <h1>Trade Smarter with AI</h1>
         <p>Advanced trading platform with AI coaching, mind scans, and MT5 integration.</p>
-        <button class="btn" onclick="showRegister()">Get Started</button>
+        <button class="btn" id="getStartedBtn">Get Started</button>
     </section>
 
     <section class="features" id="features">
@@ -157,36 +167,33 @@
         API Status: <span id="api-status">Checking...</span>
     </div>
 
-    <!-- Login Modal -->
     <div id="loginModal" class="modal hidden">
         <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
+            <span class="close-btn" id="closeLogin">&times;</span>
             <h2>Login</h2>
             <input type="email" id="loginEmail" placeholder="Email">
             <input type="password" id="loginPassword" placeholder="Password">
-            <button onclick="login()">Login</button>
+            <button id="loginBtn">Login</button>
         </div>
     </div>
 
-    <!-- Register Modal -->
     <div id="registerModal" class="modal hidden">
         <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
+            <span class="close-btn" id="closeRegister">&times;</span>
             <h2>Register</h2>
             <input type="text" id="regName" placeholder="Full Name">
             <input type="email" id="regEmail" placeholder="Email">
             <input type="password" id="regPassword" placeholder="Password">
-            <button onclick="register()">Create Account</button>
+            <button id="registerBtn">Create Account</button>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://slime-trades.onrender.com';
 
-        // Check API status on load
         fetch(`${API_URL}/health`)
             .then(r => r.json())
-            .then(data => {
+            .then(() => {
                 document.getElementById('api-status').textContent = ' Connected';
             })
             .catch(() => {
@@ -202,6 +209,20 @@
         function hideModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
+
+        document.getElementById('loginBtnNav').addEventListener('click', showLogin);
+        document.getElementById('registerBtnNav').addEventListener('click', showRegister);
+        document.getElementById('getStartedBtn').addEventListener('click', showRegister);
+        document.getElementById('closeLogin').addEventListener('click', () => hideModal('loginModal'));
+        document.getElementById('closeRegister').addEventListener('click', () => hideModal('registerModal'));
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('registerBtn').addEventListener('click', register);
+
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.add('hidden');
+            }
+        });
 
         function showError(data) {
             if (data.detail) {
@@ -223,10 +244,12 @@
                     body: JSON.stringify({ display_name, email, password })
                 });
                 const data = await res.json();
-                alert(res.ok ? 'Account created! Please log in.' : showError(data));
                 if (res.ok) {
+                    alert('Account created! Please log in.');
                     hideModal('registerModal');
                     showLogin();
+                } else {
+                    alert(showError(data));
                 }
             } catch (e) {
                 alert('Network error: ' + e.message);
@@ -253,13 +276,6 @@
                 }
             } catch (e) {
                 alert('Network error: ' + e.message);
-            }
-        }
-
-        // Close modal on outside click
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.classList.add('hidden');
             }
         }
     </script>
