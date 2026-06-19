@@ -270,6 +270,7 @@
                 if (res.ok) {
                     localStorage.setItem('token', data.access_token);
                     alert('Login successful!');
+window.location.href = 'dashboard.html';
                     hideModal('loginModal');
                 } else {
                     alert(showError(data));
@@ -281,3 +282,4 @@
     </script>
 </body>
 </html>
+

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slime Trades - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #111936;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1a237e;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #00e676; }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .nav-links span { color: #8892b0; }
+        .nav-links button {
+            color: #ff5252;
+            background: none;
+            border: 1px solid #ff5252;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-links button:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+        .dashboard {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .welcome {
+            background: #111936;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #1a237e;
+            margin-bottom: 2rem;
+        }
+        .welcome h1 { color: #00e676; margin-bottom: 0.5rem; }
+        .welcome p { color: #8892b0; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: #111936;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #1a237e;
+            transition: transform 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00e676;
+        }
+        .card h3 { color: #00e676; margin-bottom: 1rem; }
+        .card p { color: #8892b0; margin-bottom: 1rem; }
+        .card .btn {
+            background: #00e676;
+            color: #0a0e27;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">?? Slime Trades</div>
+        <div class="nav-links">
+            <span id="userEmail"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="welcome">
+            <h1>Welcome back, Trader!</h1>
+            <p>Your trading dashboard is ready. Choose a tool below to get started.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>?? Mind Scan</h3>
+                <p>Analyze your trading psychology and behavioral patterns.</p>
+                <button class="btn" onclick="alert('Mind Scan coming soon!')">Start Analysis</button>
+            </div>
+            <div class="card">
+                <h3>?? AI Coach</h3>
+                <p>Get personalized trading advice from our AI.</p>
+                <button class="btn" onclick="alert('AI Coach coming soon!')">Get Advice</button>
+            </div>
+            <div class="card">
+                <h3>??? Guardian</h3>
+                <p>Monitor your risk and protect your capital.</p>
+                <button class="btn" onclick="alert('Guardian coming soon!')">View Protection</button>
+            </div>
+            <div class="card">
+                <h3>?? MT5 Integration</h3>
+                <p>Connect your MetaTrader 5 account.</p>
+                <button class="btn" onclick="alert('MT5 Connect coming soon!')">Connect MT5</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://slime-trades.onrender.com';
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        // Decode JWT to get user info (basic)
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            document.getElementById('userEmail').textContent = payload.sub || 'User';
+        } catch (e) {
+            document.getElementById('userEmail').textContent = 'User';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
