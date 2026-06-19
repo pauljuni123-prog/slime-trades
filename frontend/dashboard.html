@@ -125,6 +125,10 @@
         .chat-message { margin-bottom: 0.5rem; }
         .chat-message.user { color: #00e676; }
         .chat-message.ai { color: #8892b0; }
+        .slider-container { margin-bottom: 1rem; }
+        .slider-container label { display: block; color: #8892b0; margin-bottom: 0.3rem; }
+        .slider-container input[type="range"] { width: 100%; }
+        .slider-value { color: #00e676; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -143,25 +147,64 @@
             <p>Your trading dashboard is ready. Choose a tool below to get started.</p>
         </div>
         <div class="grid">
+            <div class="card" onclick="showPage('mindScanPage')">
+                <h3> Mind Scan</h3>
+                <p>Analyze your trading psychology and emotional readiness.</p>
+                <button class="btn">Start Analysis</button>
+            </div>
             <div class="card" onclick="showPage('aiCoachPage')">
                 <h3> AI Coach</h3>
-                <p>Chat with our AI trading coach for personalized advice and strategies.</p>
+                <p>Chat with our AI trading coach for personalized advice.</p>
                 <button class="btn">Start Chat</button>
             </div>
             <div class="card" onclick="showPage('guardianPage')">
                 <h3> Guardian</h3>
-                <p>Risk management tools including position sizing and risk of ruin calculator.</p>
+                <p>Risk management tools including position sizing and risk analysis.</p>
                 <button class="btn">Open Guardian</button>
             </div>
             <div class="card" onclick="showPage('mt5Page')">
                 <h3> MT5 Integration</h3>
-                <p>Connect and manage your MetaTrader 5 accounts for automated trading.</p>
+                <p>Connect and manage your MetaTrader 5 accounts.</p>
                 <button class="btn">Connect MT5</button>
             </div>
-            <div class="card" onclick="alert('Mind Scan coming in next update!')">
-                <h3> Mind Scan</h3>
-                <p>Analyze your trading psychology and behavioral patterns.</p>
-                <button class="btn">Start Analysis</button>
+        </div>
+    </div>
+
+    <!-- Mind Scan Page -->
+    <div id="mindScanPage" class="dashboard page">
+        <button class="back-btn" onclick="showPage('mainDashboard')"> Back</button>
+        <div class="welcome">
+            <h1> Mind Scan</h1>
+            <p>Rate your current mental state to assess your trading readiness.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>New Scan</h3>
+                <div class="slider-container">
+                    <label>Stress Level (1-10): <span class="slider-value" id="stressValue">5</span></label>
+                    <input type="range" id="stress" min="1" max="10" value="5" oninput="document.getElementById('stressValue').textContent = this.value">
+                </div>
+                <div class="slider-container">
+                    <label>Focus Level (1-10): <span class="slider-value" id="focusValue">5</span></label>
+                    <input type="range" id="focus" min="1" max="10" value="5" oninput="document.getElementById('focusValue').textContent = this.value">
+                </div>
+                <div class="slider-container">
+                    <label>Confidence (1-10): <span class="slider-value" id="confidenceValue">5</span></label>
+                    <input type="range" id="confidence" min="1" max="10" value="5" oninput="document.getElementById('confidenceValue').textContent = this.value">
+                </div>
+                <div class="slider-container">
+                    <label>Sleep Quality (1-10): <span class="slider-value" id="sleepValue">5</span></label>
+                    <input type="range" id="sleep" min="1" max="10" value="5" oninput="document.getElementById('sleepValue').textContent = this.value">
+                </div>
+                <button class="btn" onclick="submitMindScan()">Analyze Readiness</button>
+                <div id="mindScanResult" class="result-box hidden"></div>
+            </div>
+            <div class="card">
+                <h3>Latest Scan</h3>
+                <div id="latestScan">
+                    <p style="color: #8892b0;">Loading...</p>
+                </div>
+                <button class="btn" onclick="loadLatestScan()">Refresh</button>
             </div>
         </div>
     </div>
@@ -313,6 +356,44 @@
             return res.json();
         }
 
+        // Mind Scan
+        async function submitMindScan() {
+            const stress = parseInt(document.getElementById('stress').value);
+            const focus = parseInt(document.getElementById('focus').value);
+            const confidence = parseInt(document.getElementById('confidence').value);
+            const sleep = parseInt(document.getElementById('sleep').value);
+
+            try {
+                const data = await apiCall('/mind-scans/', 'POST', { stress, focus, confidence, sleep });
+                const resultDiv = document.getElementById('mindScanResult');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = `
+                    <strong style="color: #00e676;">Scan Results:</strong><br>
+                    Readiness Score: ${data.readiness_score}/100<br>
+                    Status: <span style="color: ${data.label === 'Ready' ? '#00e676' : data.label === 'Caution' ? '#ffc107' : '#ff5252'}">${data.label}</span><br>
+                    Advice: ${data.advice}
+                `;
+                loadLatestScan();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function loadLatestScan() {
+            const latestDiv = document.getElementById('latestScan');
+            latestDiv.innerHTML = '<p style="color: #8892b0;">Loading...</p>';
+            try {
+                const data = await apiCall('/mind-scans/latest');
+                latestDiv.innerHTML = `
+                    <strong>Readiness: ${data.readiness_score}/100</strong><br>
+                    <span style="color: ${data.label === 'Ready' ? '#00e676' : data.label === 'Caution' ? '#ffc107' : '#ff5252'}">${data.label}</span><br>
+                    <span style="color: #8892b0; font-size: 0.9rem;">${data.advice}</span>
+                `;
+            } catch (e) {
+                latestDiv.innerHTML = '<p style="color: #8892b0;">No scans yet. Create your first scan!</p>';
+            }
+        }
+
         // AI Coach
         async function sendChatMessage() {
             const input = document.getElementById('chatInput');
@@ -324,7 +405,6 @@
             input.value = '';
 
             try {
-                // First create a session if needed, then send message
                 const data = await apiCall('/ai/sessions', 'POST', { personality: 'trading_coach', title: 'Trading Help' });
                 const msgData = await apiCall('/ai/messages', 'POST', { conversation_id: data.id, content: message });
                 chatBox.innerHTML += `<div class="chat-message ai">AI: ${msgData.content || 'Let me analyze that for you.'}</div>`;
@@ -422,11 +502,6 @@
                 listDiv.innerHTML = '<p style="color: #ff5252;">Failed to load accounts.</p>';
             }
         }
-
-        // Load MT5 accounts on page show
-        document.getElementById('mt5Page').addEventListener('click', function() {
-            if (this.classList.contains('active')) loadMT5Accounts();
-        });
     </script>
 </body>
 </html>
