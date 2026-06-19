@@ -84,43 +84,193 @@
             text-decoration: none;
             display: inline-block;
         }
+        .hidden { display: none !important; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .back-btn {
+            background: #1a237e;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; color: #8892b0; margin-bottom: 0.3rem; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: #0a0e27;
+            border: 1px solid #1a237e;
+            color: #fff;
+            border-radius: 6px;
+        }
+        .result-box {
+            background: #0a0e27;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #1a237e;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            background: #0a0e27;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #1a237e;
+        }
+        .chat-message { margin-bottom: 0.5rem; }
+        .chat-message.user { color: #00e676; }
+        .chat-message.ai { color: #8892b0; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">?? Slime Trades</div>
+        <div class="logo"> Slime Trades</div>
         <div class="nav-links">
             <span id="userEmail"></span>
             <button onclick="logout()">Logout</button>
         </div>
     </nav>
 
-    <div class="dashboard">
+    <!-- Main Dashboard -->
+    <div id="mainDashboard" class="dashboard page active">
         <div class="welcome">
             <h1>Welcome back, Trader!</h1>
             <p>Your trading dashboard is ready. Choose a tool below to get started.</p>
         </div>
+        <div class="grid">
+            <div class="card" onclick="showPage('aiCoachPage')">
+                <h3> AI Coach</h3>
+                <p>Chat with our AI trading coach for personalized advice and strategies.</p>
+                <button class="btn">Start Chat</button>
+            </div>
+            <div class="card" onclick="showPage('guardianPage')">
+                <h3> Guardian</h3>
+                <p>Risk management tools including position sizing and risk of ruin calculator.</p>
+                <button class="btn">Open Guardian</button>
+            </div>
+            <div class="card" onclick="showPage('mt5Page')">
+                <h3> MT5 Integration</h3>
+                <p>Connect and manage your MetaTrader 5 accounts for automated trading.</p>
+                <button class="btn">Connect MT5</button>
+            </div>
+            <div class="card" onclick="alert('Mind Scan coming in next update!')">
+                <h3> Mind Scan</h3>
+                <p>Analyze your trading psychology and behavioral patterns.</p>
+                <button class="btn">Start Analysis</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- AI Coach Page -->
+    <div id="aiCoachPage" class="dashboard page">
+        <button class="back-btn" onclick="showPage('mainDashboard')"> Back</button>
+        <div class="welcome">
+            <h1> AI Coach</h1>
+            <p>Chat with your personal AI trading coach.</p>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-message ai">AI: Hello! I'm your trading coach. How can I help you today?</div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="chatInput" placeholder="Type your message..." style="flex: 1; padding: 0.8rem; background: #0a0e27; border: 1px solid #1a237e; color: #fff; border-radius: 6px;">
+            <button class="btn" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Guardian Page -->
+    <div id="guardianPage" class="dashboard page">
+        <button class="back-btn" onclick="showPage('mainDashboard')"> Back</button>
+        <div class="welcome">
+            <h1> Guardian</h1>
+            <p>Risk management tools to protect your capital.</p>
+        </div>
         <div class="grid">
             <div class="card">
-                <h3>?? Mind Scan</h3>
-                <p>Analyze your trading psychology and behavioral patterns.</p>
-                <button class="btn" onclick="alert('Mind Scan coming soon!')">Start Analysis</button>
+                <h3>Position Size Calculator</h3>
+                <div class="form-group">
+                    <label>Account Balance ($)</label>
+                    <input type="number" id="psBalance" value="10000">
+                </div>
+                <div class="form-group">
+                    <label>Risk Percent (%)</label>
+                    <input type="number" id="psRisk" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Stop Loss (pips)</label>
+                    <input type="number" id="psStopLoss" value="20">
+                </div>
+                <div class="form-group">
+                    <label>Currency Pair</label>
+                    <select id="psPair">
+                        <option value="EUR/USD">EUR/USD</option>
+                        <option value="GBP/USD">GBP/USD</option>
+                        <option value="USD/JPY">USD/JPY</option>
+                        <option value="XAU/USD">XAU/USD</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="calculatePositionSize()">Calculate</button>
+                <div id="psResult" class="result-box hidden"></div>
             </div>
             <div class="card">
-                <h3>?? AI Coach</h3>
-                <p>Get personalized trading advice from our AI.</p>
-                <button class="btn" onclick="alert('AI Coach coming soon!')">Get Advice</button>
+                <h3>Risk of Ruin Calculator</h3>
+                <div class="form-group">
+                    <label>Account Balance ($)</label>
+                    <input type="number" id="rorBalance" value="10000">
+                </div>
+                <div class="form-group">
+                    <label>Risk Per Trade (%)</label>
+                    <input type="number" id="rorRisk" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Win Rate (%)</label>
+                    <input type="number" id="rorWinRate" value="55">
+                </div>
+                <div class="form-group">
+                    <label>Reward:Risk Ratio</label>
+                    <input type="number" id="rorRatio" value="2">
+                </div>
+                <button class="btn" onclick="calculateRiskOfRuin()">Calculate</button>
+                <div id="rorResult" class="result-box hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MT5 Page -->
+    <div id="mt5Page" class="dashboard page">
+        <button class="back-btn" onclick="showPage('mainDashboard')"> Back</button>
+        <div class="welcome">
+            <h1> MT5 Integration</h1>
+            <p>Manage your MetaTrader 5 accounts.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>Add MT5 Account</h3>
+                <div class="form-group">
+                    <label>Account Name</label>
+                    <input type="text" id="mt5Name" placeholder="My Trading Account">
+                </div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="mt5Number" placeholder="12345678">
+                </div>
+                <div class="form-group">
+                    <label>Server</label>
+                    <input type="text" id="mt5Server" placeholder="Broker-Server">
+                </div>
+                <button class="btn" onclick="addMT5Account()">Add Account</button>
+                <div id="mt5Result" class="result-box hidden"></div>
             </div>
             <div class="card">
-                <h3>??? Guardian</h3>
-                <p>Monitor your risk and protect your capital.</p>
-                <button class="btn" onclick="alert('Guardian coming soon!')">View Protection</button>
-            </div>
-            <div class="card">
-                <h3>?? MT5 Integration</h3>
-                <p>Connect your MetaTrader 5 account.</p>
-                <button class="btn" onclick="alert('MT5 Connect coming soon!')">Connect MT5</button>
+                <h3>My Accounts</h3>
+                <div id="mt5AccountsList">
+                    <p style="color: #8892b0;">Loading accounts...</p>
+                </div>
+                <button class="btn" onclick="loadMT5Accounts()">Refresh</button>
             </div>
         </div>
     </div>
@@ -133,7 +283,6 @@
             window.location.href = 'index.html';
         }
 
-        // Decode JWT to get user info (basic)
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             document.getElementById('userEmail').textContent = payload.sub || 'User';
@@ -145,6 +294,139 @@
             localStorage.removeItem('token');
             window.location.href = 'index.html';
         }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
+            const res = await fetch(`${API_URL}${endpoint}`, options);
+            return res.json();
+        }
+
+        // AI Coach
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += `<div class="chat-message user">You: ${message}</div>`;
+            input.value = '';
+
+            try {
+                // First create a session if needed, then send message
+                const data = await apiCall('/ai/sessions', 'POST', { personality: 'trading_coach', title: 'Trading Help' });
+                const msgData = await apiCall('/ai/messages', 'POST', { conversation_id: data.id, content: message });
+                chatBox.innerHTML += `<div class="chat-message ai">AI: ${msgData.content || 'Let me analyze that for you.'}</div>`;
+            } catch (e) {
+                chatBox.innerHTML += `<div class="chat-message ai">AI: I'm here to help with your trading questions!</div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Guardian - Position Size
+        async function calculatePositionSize() {
+            const balance = parseFloat(document.getElementById('psBalance').value);
+            const risk = parseFloat(document.getElementById('psRisk').value);
+            const stopLoss = parseFloat(document.getElementById('psStopLoss').value);
+            const pair = document.getElementById('psPair').value;
+
+            try {
+                const data = await apiCall('/guardian/position-size', 'POST', {
+                    balance, risk_percent: risk, stop_loss_pips: stopLoss, pair
+                });
+                const resultDiv = document.getElementById('psResult');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = `
+                    <strong style="color: #00e676;">Position Size Results:</strong><br>
+                    Risk Amount: $${data.risk_amount?.toFixed(2) || 'N/A'}<br>
+                    Lot Size: ${data.lot_size?.toFixed(2) || 'N/A'}<br>
+                    Units: ${data.units || 'N/A'}
+                `;
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Guardian - Risk of Ruin
+        async function calculateRiskOfRuin() {
+            const balance = parseFloat(document.getElementById('rorBalance').value);
+            const risk = parseFloat(document.getElementById('rorRisk').value);
+            const winRate = parseFloat(document.getElementById('rorWinRate').value);
+            const ratio = parseFloat(document.getElementById('rorRatio').value);
+
+            try {
+                const data = await apiCall('/guardian/risk-of-ruin', 'POST', {
+                    balance, risk_percent: risk, win_rate: winRate, reward_risk_ratio: ratio
+                });
+                const resultDiv = document.getElementById('rorResult');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = `
+                    <strong style="color: #00e676;">Risk Analysis:</strong><br>
+                    Ruin Probability: ${data.ruin_probability}%<br>
+                    Max Drawdown: $${data.max_drawdown}<br>
+                    Expected Value: $${data.expected_value_per_trade}<br>
+                    Risk Label: <span style="color: ${data.risk_label === 'Safe' ? '#00e676' : data.risk_label === 'Moderate' ? '#ffc107' : '#ff5252'}">${data.risk_label}</span>
+                `;
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // MT5
+        async function addMT5Account() {
+            const name = document.getElementById('mt5Name').value;
+            const number = document.getElementById('mt5Number').value;
+            const server = document.getElementById('mt5Server').value;
+
+            try {
+                const data = await apiCall('/mt5/accounts', 'POST', {
+                    name, account_number: number, server
+                });
+                const resultDiv = document.getElementById('mt5Result');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = `<strong style="color: #00e676;">Account added successfully!</strong>`;
+                loadMT5Accounts();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function loadMT5Accounts() {
+            const listDiv = document.getElementById('mt5AccountsList');
+            listDiv.innerHTML = '<p style="color: #8892b0;">Loading...</p>';
+            try {
+                const accounts = await apiCall('/mt5/accounts');
+                if (accounts.length === 0) {
+                    listDiv.innerHTML = '<p style="color: #8892b0;">No accounts added yet.</p>';
+                    return;
+                }
+                listDiv.innerHTML = accounts.map(acc => `
+                    <div style="background: #0a0e27; padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem;">
+                        <strong>${acc.name}</strong><br>
+                        <span style="color: #8892b0;">${acc.account_number} | ${acc.server}</span><br>
+                        <span style="color: ${acc.is_connected ? '#00e676' : '#ff5252'}">${acc.is_connected ? ' Connected' : ' Offline'}</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                listDiv.innerHTML = '<p style="color: #ff5252;">Failed to load accounts.</p>';
+            }
+        }
+
+        // Load MT5 accounts on page show
+        document.getElementById('mt5Page').addEventListener('click', function() {
+            if (this.classList.contains('active')) loadMT5Accounts();
+        });
     </script>
 </body>
 </html>
